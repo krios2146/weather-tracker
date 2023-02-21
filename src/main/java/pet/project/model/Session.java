@@ -11,9 +11,10 @@ public class Session {
     @GeneratedValue
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User userId;
 
+    @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 }
