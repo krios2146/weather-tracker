@@ -17,4 +17,37 @@ public class Session {
 
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
+
+    public Session(Long id, User userId, LocalDateTime expiresAt) {
+        this.id = id;
+        this.userId = userId;
+        this.expiresAt = expiresAt;
+    }
+
+    public Session() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
+    }
+
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(LocalDateTime expiresAt) {
+        this.expiresAt = expiresAt;
+    }
 }
