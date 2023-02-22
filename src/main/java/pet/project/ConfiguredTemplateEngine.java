@@ -34,9 +34,9 @@ public class ConfiguredTemplateEngine {
         WebApplicationTemplateResolver templateResolver = new WebApplicationTemplateResolver(application);
 
         templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setPrefix("/resources/templates/");
+        templateResolver.setPrefix("/WEB-INF/templates/");
         templateResolver.setSuffix(".html");
-        
+
         return templateResolver;
     }
 }
