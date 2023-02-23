@@ -15,16 +15,16 @@ public class Location {
 
     @OneToMany
     @JoinColumn(name = "user_id")
-    private List<User> userId;
+    private List<User> users;
 
     private Double latitude;
 
     private Double longitude;
 
-    public Location(Long id, String name, List<User> userId, Double latitude, Double longitude) {
+    public Location(Long id, String name, List<User> users, Double latitude, Double longitude) {
         this.id = id;
         this.name = name;
-        this.userId = userId;
+        this.users = users;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -48,12 +48,12 @@ public class Location {
         this.name = name;
     }
 
-    public List<User> getUserId() {
-        return userId;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public void setUserId(List<User> userId) {
-        this.userId = userId;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     public Double getLatitude() {
