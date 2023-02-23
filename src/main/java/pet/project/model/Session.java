@@ -13,14 +13,14 @@ public class Session {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
-    public Session(Long id, User userId, LocalDateTime expiresAt) {
+    public Session(Long id, User user, LocalDateTime expiresAt) {
         this.id = id;
-        this.userId = userId;
+        this.user = user;
         this.expiresAt = expiresAt;
     }
 
@@ -35,12 +35,12 @@ public class Session {
         this.id = id;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getExpiresAt() {
