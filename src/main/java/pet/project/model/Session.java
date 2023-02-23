@@ -24,6 +24,11 @@ public class Session {
         this.expiresAt = expiresAt;
     }
 
+    public Session(User user, LocalDateTime expiresAt) {
+        this.user = user;
+        this.expiresAt = expiresAt;
+    }
+
     public Session() {
     }
 

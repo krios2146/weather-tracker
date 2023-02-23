@@ -29,6 +29,13 @@ public class Location {
         this.longitude = longitude;
     }
 
+    public Location(String name, List<User> users, Double latitude, Double longitude) {
+        this.name = name;
+        this.users = users;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public Location() {
     }
 
