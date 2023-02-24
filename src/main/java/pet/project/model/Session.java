@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 @Table(name = "sessions")
 public class Session {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sessions_seq")
+    @SequenceGenerator(name = "sessions_seq", sequenceName = "sessions_seq")
     private Long id;
 
     @ManyToOne
