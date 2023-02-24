@@ -12,14 +12,14 @@ import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.web.servlet.IServletWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
-import pet.project.ConfiguredTemplateEngine;
+import pet.project.util.TemplateEngineUtil;
 
 import java.io.IOException;
 
 @WebServlet(name = "HomeServlet", urlPatterns = "/")
 public class HomeServlet extends HttpServlet {
 
-    private final ITemplateEngine templateEngine = ConfiguredTemplateEngine.getInstance();
+    private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
     private IWebContext context;
 
     @Override

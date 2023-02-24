@@ -2,7 +2,7 @@ package pet.project.servlet;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
-import pet.project.ConfiguredTemplateEngine;
+import pet.project.util.TemplateEngineUtil;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ public class WeatherTrackerFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        ConfiguredTemplateEngine.buildTemplateEngine(filterConfig.getServletContext());
+        TemplateEngineUtil.buildTemplateEngine(filterConfig.getServletContext());
     }
 
     @Override
@@ -19,7 +19,7 @@ public class WeatherTrackerFilter implements Filter {
         servletRequest.setCharacterEncoding("UTF-8");
         servletResponse.setCharacterEncoding("UTF-8");
         servletResponse.setContentType("text/html");
-        
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

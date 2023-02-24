@@ -1,4 +1,4 @@
-package pet.project;
+package pet.project.util;
 
 import jakarta.servlet.ServletContext;
 import org.thymeleaf.ITemplateEngine;
@@ -9,14 +9,14 @@ import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.IWebApplication;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
-public class ConfiguredTemplateEngine {
+public class TemplateEngineUtil {
     private static final TemplateEngine INSTANCE;
 
     static {
         INSTANCE = new TemplateEngine();
     }
 
-    private ConfiguredTemplateEngine() {
+    private TemplateEngineUtil() {
 
     }
 
