@@ -14,7 +14,7 @@ public class Location {
 
     private String name;
 
-    @OneToMany
+    @ManyToMany
     @JoinColumn(name = "user_id")
     private List<User> users;
 
