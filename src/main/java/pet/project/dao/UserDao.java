@@ -1,31 +1,28 @@
-package pet.project.repository;
+package pet.project.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
-import pet.project.model.Location;
+import pet.project.model.User;
 import pet.project.util.EntityManagerFactoryUtil;
 
 import java.util.List;
 import java.util.Optional;
 
-public class LocationRepository implements CrudRepository<Location> {
+public class UserDao {
     private final EntityManager entityManager = EntityManagerFactoryUtil.getInstance().createEntityManager();
 
-    @Override
-    public Optional<Location> findById(Long id) {
-        Location location = entityManager.find(Location.class, id);
-        return Optional.ofNullable(location);
+    public Optional<User> findById(Long id) {
+        User user = entityManager.find(User.class, id);
+        return Optional.ofNullable(user);
     }
 
-    @Override
-    public List<Location> findAll() {
-        TypedQuery<Location> query = entityManager.createQuery("SELECT * FROM locations", Location.class);
+    public List<User> findAll() {
+        TypedQuery<User> query = entityManager.createQuery("SELECT * FROM users", User.class);
         return query.getResultList();
     }
 
-    @Override
-    public void save(Location entity) {
+    public void save(User entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -40,8 +37,7 @@ public class LocationRepository implements CrudRepository<Location> {
         }
     }
 
-    @Override
-    public void delete(Location entity) {
+    public void delete(User entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -56,8 +52,7 @@ public class LocationRepository implements CrudRepository<Location> {
         }
     }
 
-    @Override
-    public void update(Location entity) {
+    public void update(User entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();

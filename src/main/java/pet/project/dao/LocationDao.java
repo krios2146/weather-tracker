@@ -1,31 +1,28 @@
-package pet.project.repository;
+package pet.project.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
-import pet.project.model.User;
+import pet.project.model.Location;
 import pet.project.util.EntityManagerFactoryUtil;
 
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepository implements CrudRepository<User> {
+public class LocationDao {
     private final EntityManager entityManager = EntityManagerFactoryUtil.getInstance().createEntityManager();
 
-    @Override
-    public Optional<User> findById(Long id) {
-        User user = entityManager.find(User.class, id);
-        return Optional.ofNullable(user);
+    public Optional<Location> findById(Long id) {
+        Location location = entityManager.find(Location.class, id);
+        return Optional.ofNullable(location);
     }
 
-    @Override
-    public List<User> findAll() {
-        TypedQuery<User> query = entityManager.createQuery("SELECT * FROM users", User.class);
+    public List<Location> findAll() {
+        TypedQuery<Location> query = entityManager.createQuery("SELECT * FROM locations", Location.class);
         return query.getResultList();
     }
 
-    @Override
-    public void save(User entity) {
+    public void save(Location entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -40,8 +37,7 @@ public class UserRepository implements CrudRepository<User> {
         }
     }
 
-    @Override
-    public void delete(User entity) {
+    public void delete(Location entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -56,8 +52,7 @@ public class UserRepository implements CrudRepository<User> {
         }
     }
 
-    @Override
-    public void update(User entity) {
+    public void update(Location entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();

@@ -1,4 +1,4 @@
-package pet.project.repository;
+package pet.project.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -8,23 +8,21 @@ import pet.project.util.EntityManagerFactoryUtil;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public class SessionRepository implements CrudRepository<Session> {
+public class SessionDao {
     private final EntityManager entityManager = EntityManagerFactoryUtil.getInstance().createEntityManager();
 
-    @Override
-    public Optional<Session> findById(Long id) {
+    public Optional<Session> findById(UUID id) {
         Session session = entityManager.find(Session.class, id);
         return Optional.ofNullable(session);
     }
 
-    @Override
     public List<Session> findAll() {
         TypedQuery<Session> query = entityManager.createQuery("SELECT * FROM sessions", Session.class);
         return query.getResultList();
     }
 
-    @Override
     public void save(Session entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -40,7 +38,6 @@ public class SessionRepository implements CrudRepository<Session> {
         }
     }
 
-    @Override
     public void delete(Session entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -56,7 +53,6 @@ public class SessionRepository implements CrudRepository<Session> {
         }
     }
 
-    @Override
     public void update(Session entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
