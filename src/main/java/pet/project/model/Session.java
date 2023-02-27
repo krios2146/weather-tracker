@@ -3,14 +3,13 @@ package pet.project.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "sessions")
 public class Session {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sessions_seq")
-    @SequenceGenerator(name = "sessions_seq", sequenceName = "sessions_seq")
-    private Long id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -19,7 +18,7 @@ public class Session {
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
-    public Session(Long id, User user, LocalDateTime expiresAt) {
+    public Session(UUID id, User user, LocalDateTime expiresAt) {
         this.id = id;
         this.user = user;
         this.expiresAt = expiresAt;
@@ -33,11 +32,11 @@ public class Session {
     public Session() {
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
