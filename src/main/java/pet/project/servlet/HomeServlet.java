@@ -30,7 +30,7 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (context == null) {
-            context = buildWebExchange(req, resp);
+            context = buildWebContext(req, resp);
         }
         super.service(req, resp);
     }
@@ -40,7 +40,7 @@ public class HomeServlet extends HttpServlet {
         templateEngine.process("index", context, resp.getWriter());
     }
 
-    private IWebContext buildWebExchange(HttpServletRequest req, HttpServletResponse resp) {
+    private IWebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
         ServletContext servletContext = this.getServletContext();
         JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(servletContext);
         IServletWebExchange webExchange = application.buildExchange(req, resp);
