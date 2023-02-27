@@ -3,9 +3,7 @@ package pet.project.servlet;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.context.WebContext;
@@ -52,6 +50,9 @@ public class RegistrationServlet extends HttpServlet {
 
         Session session = new Session(UUID.randomUUID(), user, LocalDateTime.now().plusHours(24));
         sessionDao.save(session);
+
+        Cookie cookie = new Cookie("sessionId", session.getId().toString());
+        resp.addCookie(cookie);
     }
 
     private IWebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
