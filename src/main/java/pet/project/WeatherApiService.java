@@ -2,6 +2,8 @@ package pet.project;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pet.project.model.Location;
+import pet.project.model.api.ApiLocation;
+import pet.project.model.api.GeocodingApiResponse;
 import pet.project.model.api.Weather;
 import pet.project.model.api.WeatherApiResponse;
 
@@ -10,6 +12,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 public class WeatherApiService {
     private static final String APP_ID = "ff54fce37c4721c1b5e9e22bbd8e9274";
@@ -29,6 +32,16 @@ public class WeatherApiService {
         return weatherApiResponse.getWeather();
     }
 
+    public List<ApiLocation> getLocationsByName(String nameOfLocation) throws IOException, InterruptedException {
+        URI uri = buildUriForGeocodingRequest(nameOfLocation);
+        HttpRequest request = buildRequest(uri);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        GeocodingApiResponse geocodingApiResponse = objectMapper.readValue(response.body(), GeocodingApiResponse.class);
+        return geocodingApiResponse.getLocationList();
+    }
+
     private static HttpRequest buildRequest(URI uri) {
         return HttpRequest.newBuilder(uri)
                 .GET()
@@ -41,5 +54,11 @@ public class WeatherApiService {
                 + "&lon=" + location.getLongitude()
                 + "&appid=" + APP_ID
                 + "&units=" + "metric");
+    }
+
+    private static URI buildUriForGeocodingRequest(String nameOfLocation) {
+        return URI.create(BASE_API_URL + GEOCODING_API_URL_SUFFIX
+                + "?q=" + nameOfLocation
+                + "&appid=" + APP_ID);
     }
 }
