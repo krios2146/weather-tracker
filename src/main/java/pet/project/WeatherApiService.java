@@ -13,12 +13,15 @@ import java.net.http.HttpResponse;
 
 public class WeatherApiService {
     private static final String APP_ID = "ff54fce37c4721c1b5e9e22bbd8e9274";
-    private static final String API_URL = "https://api.openweathermap.org/data/2.5/weather";
+    private static final String BASE_API_URL = "https://api.openweathermap.org";
+    private static final String WEATHER_API_URL_SUFFIX = "/data/2.5/weather";
+    private static final String GEOCODING_API_URL_SUFFIX = "/geo/1.0/direct";
 
     private final HttpClient client = HttpClient.newHttpClient();
 
     public Weather getWeatherForLocation(Location location) throws IOException, InterruptedException {
-        HttpRequest request = buildRequest(location);
+        URI uri = buildUriForWeatherRequest(location);
+        HttpRequest request = buildRequest(uri);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -26,15 +29,14 @@ public class WeatherApiService {
         return weatherApiResponse.getWeather();
     }
 
-    private static HttpRequest buildRequest(Location location) {
-        URI uri = buildUri(location);
+    private static HttpRequest buildRequest(URI uri) {
         return HttpRequest.newBuilder(uri)
                 .GET()
                 .build();
     }
 
-    private static URI buildUri(Location location) {
-        return URI.create(API_URL
+    private static URI buildUriForWeatherRequest(Location location) {
+        return URI.create(BASE_API_URL + WEATHER_API_URL_SUFFIX
                 + "?lat=" + location.getLatitude()
                 + "&lon=" + location.getLongitude()
                 + "&appid=" + APP_ID
