@@ -2,6 +2,7 @@ package pet.project;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pet.project.model.Location;
+import pet.project.model.api.Weather;
 import pet.project.model.api.WeatherApiResponse;
 
 import java.io.IOException;
@@ -16,13 +17,13 @@ public class WeatherApiService {
 
     private final HttpClient client = HttpClient.newHttpClient();
 
-    public void getWeatherForLocation(Location location) throws IOException, InterruptedException {
+    public Weather getWeatherForLocation(Location location) throws IOException, InterruptedException {
         HttpRequest request = buildRequest(location);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         ObjectMapper objectMapper = new ObjectMapper();
         WeatherApiResponse weatherApiResponse = objectMapper.readValue(response.body(), WeatherApiResponse.class);
-        weatherApiResponse.getWeather();
+        return weatherApiResponse.getWeather();
     }
 
     private static HttpRequest buildRequest(Location location) {
