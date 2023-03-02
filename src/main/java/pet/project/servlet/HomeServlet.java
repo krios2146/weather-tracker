@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.thymeleaf.ITemplateEngine;
-import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.web.servlet.IServletWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
@@ -20,7 +19,7 @@ import java.io.IOException;
 public class HomeServlet extends HttpServlet {
 
     private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
-    private IWebContext context;
+    private WebContext context;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -40,7 +39,7 @@ public class HomeServlet extends HttpServlet {
         templateEngine.process("index", context, resp.getWriter());
     }
 
-    private IWebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
+    private WebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
         ServletContext servletContext = this.getServletContext();
         JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(servletContext);
         IServletWebExchange webExchange = application.buildExchange(req, resp);
