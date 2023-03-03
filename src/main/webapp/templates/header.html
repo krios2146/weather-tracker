@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <header class="container-fluid p-3">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col align-items-center d-flex">
+                    <a href="/" th:href="@{/}" class="text-decoration-none"><h4 class="m-0">Weather tracker</h4></a>
+                </div>
+                <div class="col d-flex justify-content-end" th:classappend="${isUserLoggedIn}? 'd-none'">
+                    <a class="btn btn-outline-primary px-3" href="sign-in" th:href="@{/sign-in}" role="button">Sign in</a>
+                    <a class="btn btn-primary px-3 ms-2" href="sign-up" th:href="@{/sign-up}" role="button">Sign up</a>
+                </div>
+                <div class="col d-flex justify-content-end align-items-center" th:classappend="!(${isUserLoggedIn})? 'd-none'">
+                    <span>username</span>
+                    <a class="btn btn-primary px-3 ms-4" href="sign-out" th:href="@{/sign-out}" role="button">Sign out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+</body>
+
+</html>
