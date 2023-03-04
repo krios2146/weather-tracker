@@ -22,6 +22,11 @@ public class UserDao {
         return query.getResultList();
     }
 
+    public Optional<User> findByLogin(String login) {
+        User user = entityManager.find(User.class, login);
+        return Optional.ofNullable(user);
+    }
+
     public void save(User entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
