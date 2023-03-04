@@ -17,14 +17,16 @@ public class UserDao {
         return Optional.ofNullable(user);
     }
 
+    public Optional<User> findByLogin(String login) {
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login", User.class);
+        query.setParameter("login", login);
+        User user = query.getSingleResult();
+        return Optional.ofNullable(user);
+    }
+
     public List<User> findAll() {
         TypedQuery<User> query = entityManager.createQuery("SELECT * FROM users", User.class);
         return query.getResultList();
-    }
-
-    public Optional<User> findByLogin(String login) {
-        User user = entityManager.find(User.class, login);
-        return Optional.ofNullable(user);
     }
 
     public void save(User entity) {
