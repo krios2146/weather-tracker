@@ -3,7 +3,10 @@ package pet.project.servlet;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.context.WebContext;
@@ -19,13 +22,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@WebServlet(name = "RegistrationServlet", urlPatterns = "/registration")
-public class RegistrationServlet extends HttpServlet {
+@WebServlet(name = "SignUpServlet", urlPatterns = "/sign-up")
+public class SignUpServlet extends HttpServlet {
 
-    private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
-    private IWebContext context;
     private final UserDao userDao = new UserDao();
     private final SessionDao sessionDao = new SessionDao();
+    private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
+    private IWebContext context;
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,15 +40,15 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        templateEngine.process("registration", context, resp.getWriter());
+        templateEngine.process("sign-up", context, resp.getWriter());
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String username = req.getParameter("username");
+        String login = req.getParameter("login");
         String password = req.getParameter("password");
 
-        User user = new User(username, password);
+        User user = new User(login, password);
         userDao.save(user);
 
         Session session = new Session(UUID.randomUUID(), user, LocalDateTime.now().plusHours(24));
@@ -55,6 +58,7 @@ public class RegistrationServlet extends HttpServlet {
         resp.addCookie(cookie);
     }
 
+    // TODO: Code repeats in every servlet
     private IWebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
         ServletContext servletContext = this.getServletContext();
         JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(servletContext);
