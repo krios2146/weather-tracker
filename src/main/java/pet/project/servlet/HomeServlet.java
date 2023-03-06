@@ -66,8 +66,9 @@ public class HomeServlet extends HttpServlet {
                 weatherList.add(weather);
             }
         } catch (InterruptedException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             templateEngine.process("error", context, resp.getWriter());
-            throw new RuntimeException("Issues with api");
+            throw new RuntimeException("Issues with weather API call");
         }
 
         context.setVariable("weatherList", weatherList);
