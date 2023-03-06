@@ -20,6 +20,7 @@ import pet.project.util.TemplateEngineUtil;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @WebServlet(name = "SignInServlet", urlPatterns = "/sign-in")
 public class SignInServlet extends HttpServlet {
@@ -54,7 +55,7 @@ public class SignInServlet extends HttpServlet {
             throw new RuntimeException("Authorization exception: wrong password");
         }
 
-        Session session = new Session(user, LocalDateTime.now().plusHours(24));
+        Session session = new Session(UUID.randomUUID(), user, LocalDateTime.now().plusHours(24));
         sessionDao.save(session);
 
         Cookie cookie = new Cookie("sessionId", session.getId().toString());
