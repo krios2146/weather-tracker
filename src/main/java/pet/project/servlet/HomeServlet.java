@@ -4,6 +4,7 @@ import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,13 +12,24 @@ import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.web.servlet.IServletWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
+import pet.project.WeatherApiService;
+import pet.project.dao.LocationDao;
+import pet.project.dao.SessionDao;
+import pet.project.model.Location;
+import pet.project.model.Session;
+import pet.project.model.User;
+import pet.project.model.api.Weather;
 import pet.project.util.TemplateEngineUtil;
 
 import java.io.IOException;
+import java.util.*;
 
 @WebServlet(name = "HomeServlet", urlPatterns = "/")
 public class HomeServlet extends HttpServlet {
 
+    private final SessionDao sessionDao = new SessionDao();
+    private final LocationDao locationDao = new LocationDao();
+    private final WeatherApiService weatherApiService = new WeatherApiService();
     private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
     private WebContext context;
 
@@ -36,7 +48,30 @@ public class HomeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        templateEngine.process("index", context, resp.getWriter());
+        // TODO: Repeated code - extract to CookieService
+        Cookie[] cookies = req.getCookies();
+        Optional<Cookie> sessionIdCookie = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("sessionId"))
+                .findFirst();
+        String sessionId = sessionIdCookie.get().getValue();
+        Optional<Session> session = sessionDao.findById(UUID.fromString(sessionId));
+        User user = session.get().getUser();
+        List<Location> userLocations = locationDao.findByUser(user);
+
+        // TODO: try-catch looks out of place + maybe use Stream API
+        List<Weather> weatherList = new ArrayList<>();
+        try {
+            for (Location location : userLocations) {
+                Weather weather = weatherApiService.getWeatherForLocation(location);
+                weatherList.add(weather);
+            }
+        } catch (InterruptedException e) {
+            templateEngine.process("error", context, resp.getWriter());
+            throw new RuntimeException("Issues with api");
+        }
+
+        context.setVariable("weatherList", weatherList);
+        templateEngine.process("home", context, resp.getWriter());
     }
 
     private WebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
