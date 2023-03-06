@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import pet.project.model.Location;
+import pet.project.model.User;
 import pet.project.util.EntityManagerFactoryUtil;
 
 import java.util.List;
@@ -19,6 +20,15 @@ public class LocationDao {
 
     public List<Location> findAll() {
         TypedQuery<Location> query = entityManager.createQuery("SELECT * FROM locations", Location.class);
+        return query.getResultList();
+    }
+
+    public List<Location> findByUser(User user) {
+        TypedQuery<Location> query = entityManager.createQuery("SELECT l FROM Location l " +
+                        "JOIN l.users u " +
+                        "WHERE u.id = :userId",
+                Location.class);
+        query.setParameter("userId", user.getId());
         return query.getResultList();
     }
 
