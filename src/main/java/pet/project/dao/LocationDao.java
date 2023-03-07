@@ -47,6 +47,14 @@ public class LocationDao {
         return query.getResultList();
     }
 
+    public List<Location> findByName(String name) {
+        TypedQuery<Location> query = entityManager.createQuery("SELECT * FROM Location l " +
+                        "WHERE l.name = :name",
+                Location.class);
+        query.setParameter("name", name);
+        return query.getResultList();
+    }
+
     public void save(Location entity) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
