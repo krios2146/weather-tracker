@@ -18,7 +18,13 @@
                     <div class="card-body">
                         <h5 class="card-title" th:text="location.name">Name</h5>
                         <p class="card-text" th:text="location.country">Country</p>
-                        <a href="/" class="btn btn-primary" th:href="@{/}">Add to tracked locations</a>
+                        <form action="/" method="post" th:object="location">
+                            <input type="hidden" th:field="locaion.name">
+                            <input type="hidden" th:field="locaion.latitude">
+                            <input type="hidden" th:field="locaion.longitude">
+                            <input type="hidden" th:field="locaion.country">
+                            <button type="submit" class="btn btn-primary">Add to tracked locations</button>
+                        </form>
                     </div>
                 </div>
             </div>
