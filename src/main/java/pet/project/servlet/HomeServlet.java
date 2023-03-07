@@ -75,6 +75,25 @@ public class HomeServlet extends HttpServlet {
         templateEngine.process("home", context, resp.getWriter());
     }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // TODO: Repeated code - extract to CookieService
+        Cookie[] cookies = req.getCookies();
+        Optional<Cookie> sessionIdCookie = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("sessionId"))
+                .findFirst();
+        String sessionId = sessionIdCookie.get().getValue();
+        Optional<Session> session = sessionDao.findById(UUID.fromString(sessionId));
+        User user = session.get().getUser();
+
+        Long locationId = Long.parseLong(req.getParameter("locationId"));
+        Location location = locationDao.findById(locationId).orElseThrow();
+        List<User> userList = location.getUsers();
+        userList.remove(user);
+        location.setUsers(userList);
+        locationDao.update(location);
+    }
+
     private WebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
         ServletContext servletContext = this.getServletContext();
         JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(servletContext);
