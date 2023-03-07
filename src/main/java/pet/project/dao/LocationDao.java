@@ -23,6 +23,21 @@ public class LocationDao {
         return query.getResultList();
     }
 
+    public boolean isPresent(Location location) {
+        TypedQuery<Integer> query = entityManager.createQuery("COUNT * FROM Location l " +
+                        "WHERE l.name = :name AND" +
+                        "l.longitude = :longitude AND" +
+                        "l.latitude = :latitude",
+                Integer.class);
+
+        query.setParameter("name", location.getName());
+        query.setParameter("longitude", location.getLongitude());
+        query.setParameter("latitude", location.getLatitude());
+
+        List<Integer> resultList = query.getResultList();
+        return resultList.isEmpty() ? false : true;
+    }
+
     public List<Location> findByUser(User user) {
         TypedQuery<Location> query = entityManager.createQuery("SELECT l FROM Location l " +
                         "JOIN l.users u " +
