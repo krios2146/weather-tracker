@@ -53,6 +53,12 @@ public class HomeServlet extends HttpServlet {
         Optional<Cookie> sessionIdCookie = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals("sessionId"))
                 .findFirst();
+
+        if (sessionIdCookie.isEmpty()) {
+            templateEngine.process("home", context, resp.getWriter());
+            return;
+        }
+
         String sessionId = sessionIdCookie.get().getValue();
         Optional<Session> session = sessionDao.findById(UUID.fromString(sessionId));
         User user = session.get().getUser();
@@ -68,7 +74,7 @@ public class HomeServlet extends HttpServlet {
         } catch (InterruptedException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             templateEngine.process("error", context, resp.getWriter());
-            throw new RuntimeException("Issues with weather API call");
+            throw new RuntimeException("Issues with weather API call", e.getCause());
         }
 
         context.setVariable("weatherList", weatherList);
