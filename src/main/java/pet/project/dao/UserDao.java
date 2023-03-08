@@ -26,7 +26,7 @@ public class UserDao {
 
     public boolean isPresent(User user) {
         TypedQuery<Integer> query = entityManager.createQuery("SELECT COUNT(*) FROM User u " +
-                        "WHERE u.login = :login AND" +
+                        "WHERE u.login = :login AND " +
                         "u.password = :password",
                 Integer.class);
 

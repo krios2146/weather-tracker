@@ -25,8 +25,8 @@ public class LocationDao {
 
     public boolean isPresent(Location location) {
         TypedQuery<Integer> query = entityManager.createQuery("SELECT COUNT(*) FROM Location l " +
-                        "WHERE l.name = :name AND" +
-                        "l.longitude = :longitude AND" +
+                        "WHERE l.name = :name AND " +
+                        "l.longitude = :longitude AND " +
                         "l.latitude = :latitude",
                 Integer.class);
 
