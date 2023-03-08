@@ -78,6 +78,7 @@ public class HomeServlet extends HttpServlet {
         }
 
         context.setVariable("weatherList", weatherList);
+        context.setVariable("login", user.getLogin());
         templateEngine.process("home", context, resp.getWriter());
     }
 
