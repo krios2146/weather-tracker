@@ -49,6 +49,14 @@ public class SignUpServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         User user = new User(login, password);
+
+        // TODO: Properly handle all Exceptions
+        if (userDao.isPresent(user)) {
+            resp.sendRedirect("sign-up");
+            resp.sendError(HttpServletResponse.SC_CONFLICT);
+            throw new RuntimeException("User already exists in the database");
+        }
+
         userDao.save(user);
 
         Session session = new Session(UUID.randomUUID(), user, LocalDateTime.now().plusHours(24));
