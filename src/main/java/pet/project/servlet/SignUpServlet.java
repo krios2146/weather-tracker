@@ -56,6 +56,7 @@ public class SignUpServlet extends HttpServlet {
 
         Cookie cookie = new Cookie("sessionId", session.getId().toString());
         resp.addCookie(cookie);
+        resp.sendRedirect("");
     }
 
     // TODO: Code repeats in every servlet
