@@ -2,6 +2,7 @@ package pet.project.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import pet.project.model.Location;
 import pet.project.model.User;
@@ -24,18 +25,18 @@ public class LocationDao {
     }
 
     public boolean isPresent(Location location) {
-        TypedQuery<Integer> query = entityManager.createQuery("SELECT COUNT(*) FROM Location l " +
-                        "WHERE l.name = :name AND " +
-                        "l.longitude = :longitude AND " +
-                        "l.latitude = :latitude",
-                Integer.class);
+        Query query = entityManager.createQuery("SELECT COUNT(*) FROM Location l " +
+                "WHERE l.name = :name AND " +
+                "l.longitude = :longitude AND " +
+                "l.latitude = :latitude"
+        );
 
         query.setParameter("name", location.getName());
         query.setParameter("longitude", location.getLongitude());
         query.setParameter("latitude", location.getLatitude());
 
-        List<Integer> resultList = query.getResultList();
-        return resultList.isEmpty() ? false : true;
+        Long result = (Long) query.getSingleResult();
+        return result > 0;
     }
 
     public List<Location> findByUser(User user) {
