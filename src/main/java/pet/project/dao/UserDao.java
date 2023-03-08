@@ -24,6 +24,19 @@ public class UserDao {
         return Optional.ofNullable(user);
     }
 
+    public boolean isPresent(User user) {
+        TypedQuery<Integer> query = entityManager.createQuery("SELECT COUNT(*) FROM User u " +
+                        "WHERE u.login = :login AND" +
+                        "u.password = :password",
+                Integer.class);
+
+        query.setParameter("login", user.getLogin());
+        query.setParameter("password", user.getPassword());
+
+        List<Integer> resultList = query.getResultList();
+        return resultList.isEmpty() ? false : true;
+    }
+
     public List<User> findAll() {
         TypedQuery<User> query = entityManager.createQuery("SELECT * FROM users", User.class);
         return query.getResultList();
