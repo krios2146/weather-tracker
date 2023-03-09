@@ -72,13 +72,11 @@ public class SearchServlet extends HttpServlet {
         Optional<Session> session = sessionDao.findById(UUID.fromString(sessionId));
         User user = session.get().getUser();
 
-        ApiLocation foundLocation = (ApiLocation) req.getAttribute("location");
-
         Location location = new Location(
-                foundLocation.getName(),
+                req.getParameter("name"),
                 List.of(user),
-                foundLocation.getLatitude(),
-                foundLocation.getLongitude()
+                Double.valueOf(req.getParameter("latitude")),
+                Double.valueOf(req.getParameter("longitude"))
         );
 
         if (locationDao.isPresent(location)) {
