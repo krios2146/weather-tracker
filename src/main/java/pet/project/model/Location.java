@@ -3,6 +3,7 @@ package pet.project.model;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "locations")
@@ -38,6 +39,30 @@ public class Location {
     }
 
     public Location() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Location location = (Location) o;
+
+        if (!id.equals(location.id)) return false;
+        if (!name.equals(location.name)) return false;
+        if (!Objects.equals(users, location.users)) return false;
+        if (!latitude.equals(location.latitude)) return false;
+        return longitude.equals(location.longitude);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + (users != null ? users.hashCode() : 0);
+        result = 31 * result + latitude.hashCode();
+        result = 31 * result + longitude.hashCode();
+        return result;
     }
 
     public Long getId() {
