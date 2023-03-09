@@ -55,6 +55,7 @@ public class HomeServlet extends HttpServlet {
                 .findFirst();
 
         if (sessionIdCookie.isEmpty()) {
+            context.clearVariables();
             templateEngine.process("home", context, resp.getWriter());
             return;
         }
