@@ -1,10 +1,14 @@
 package pet.project.model.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherApiResponse {
     @JsonProperty("weather")
-    private Weather weather;
+    private List<Weather> weather;
     @JsonProperty("temp")
     private Double temperature;
     @JsonProperty("feels_like")
@@ -18,7 +22,7 @@ public class WeatherApiResponse {
     @JsonProperty("clouds")
     private Clouds clouds;
 
-    public Weather getWeather() {
+    public List<Weather> getWeather() {
         return weather;
     }
 
