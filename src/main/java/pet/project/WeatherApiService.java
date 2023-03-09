@@ -1,9 +1,9 @@
 package pet.project;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pet.project.model.Location;
 import pet.project.model.api.ApiLocation;
-import pet.project.model.api.GeocodingApiResponse;
 import pet.project.model.api.Weather;
 import pet.project.model.api.WeatherApiResponse;
 
@@ -38,8 +38,11 @@ public class WeatherApiService {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         ObjectMapper objectMapper = new ObjectMapper();
-        GeocodingApiResponse geocodingApiResponse = objectMapper.readValue(response.body(), GeocodingApiResponse.class);
-        return geocodingApiResponse.getLocationList();
+        List<ApiLocation> apiLocationList = objectMapper.readValue(
+                response.body(),
+                new TypeReference<List<ApiLocation>>() {
+                });
+        return apiLocationList;
     }
 
     private static HttpRequest buildRequest(URI uri) {
@@ -57,8 +60,10 @@ public class WeatherApiService {
     }
 
     private static URI buildUriForGeocodingRequest(String nameOfLocation) {
+        // Somehow without explicit limit api returns only 1 object
         return URI.create(BASE_API_URL + GEOCODING_API_URL_SUFFIX
                 + "?q=" + nameOfLocation
+                + "&limit=5"
                 + "&appid=" + APP_ID);
     }
 }
