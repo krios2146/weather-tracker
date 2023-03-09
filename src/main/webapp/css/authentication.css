@@ -1,5 +1,5 @@
 .bg-image {
-    background-image: url('../img/back-field.jpg');
+    background-image: url("../img/back-field.jpg");
     background-size: cover;
     background-position: center;
     height: 100%;
