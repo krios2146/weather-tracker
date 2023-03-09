@@ -15,23 +15,22 @@
     <div th:replace="search-component"></div>
     <div class="container-fluid">
         <div class="row">
-            <div class="card p-3 m-2 col-3" th:each="weather : ${weatherList}">
+            <div class="card p-3 m-2 col-3" th:each="item : ${locationWeatherMap}">
                 <img alt="weather-image" class="card-img-top" src="img/clear-day.svg">
-                <form action="/" method="post">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${locaion.name}">Location</h5>
-                        <h6 class="card-subtitle" th:text="weather.currentState">Weather</h6>
-                        <p class="card-text" th:text="weather.description">Description</p>
-                        <input type="hidden" name="locationId" th:value="${location.id}">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${item.key.name}">Location</h5>
+                    <h6 class="card-subtitle" th:text="${item.value.currentState}">Weather</h6>
+                    <p class="card-text" th:text="${item.value.description}">Description</p>
+                    <form method="post">
+                        <input name="locationId" th:value="${item.key.id}" type="hidden">
                         <button class="btn btn-outline-danger" type="submit">Delete</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<script crossorigin="anonymous"
-        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+<script crossorigin="anonymous" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
