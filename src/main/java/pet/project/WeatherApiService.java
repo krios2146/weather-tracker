@@ -29,7 +29,9 @@ public class WeatherApiService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         WeatherApiResponse weatherApiResponse = objectMapper.readValue(response.body(), WeatherApiResponse.class);
-        return weatherApiResponse.getWeather();
+        // TODO: Always contain only one element
+        List<Weather> weatherList = weatherApiResponse.getWeather();
+        return weatherList.get(0);
     }
 
     public List<ApiLocation> getLocationsByName(String nameOfLocation) throws IOException, InterruptedException {
