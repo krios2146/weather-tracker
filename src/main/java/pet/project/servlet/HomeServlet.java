@@ -66,11 +66,11 @@ public class HomeServlet extends HttpServlet {
         List<Location> userLocations = locationDao.findByUser(user);
 
         // TODO: try-catch looks out of place + maybe use Stream API
-        List<Weather> weatherList = new ArrayList<>();
+        Map<Location, Weather> locationWeatherMap = new HashMap<>();
         try {
             for (Location location : userLocations) {
                 Weather weather = weatherApiService.getWeatherForLocation(location);
-                weatherList.add(weather);
+                locationWeatherMap.put(location, weather);
             }
         } catch (InterruptedException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -78,7 +78,7 @@ public class HomeServlet extends HttpServlet {
             throw new RuntimeException("Issues with weather API call", e.getCause());
         }
 
-        context.setVariable("weatherList", weatherList);
+        context.setVariable("locationWeatherMap", locationWeatherMap);
         context.setVariable("login", user.getLogin());
         templateEngine.process("home", context, resp.getWriter());
     }
