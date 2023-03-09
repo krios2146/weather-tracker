@@ -88,7 +88,7 @@ public class SearchServlet extends HttpServlet {
         } else {
             locationDao.save(location);
         }
-
+        resp.sendRedirect(req.getContextPath());
     }
 
     private Location findSameLocationInDatabase(Location location) {
