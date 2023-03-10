@@ -15,6 +15,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import pet.project.WeatherApiService;
 import pet.project.dao.LocationDao;
 import pet.project.dao.SessionDao;
+import pet.project.dto.WeatherDto;
 import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
@@ -73,12 +74,22 @@ public class HomeServlet extends HttpServlet {
         User user = session.get().getUser();
         List<Location> userLocations = locationDao.findByUser(user);
 
-        // TODO: try-catch looks out of place + maybe use Stream API
-        Map<Location, Weather> locationWeatherMap = new HashMap<>();
+        // TODO: `sendError` is a "terminate" method + maybe use Stream API
+        Map<Location, WeatherDto> locationWeatherMap = new HashMap<>();
         try {
             for (Location location : userLocations) {
                 Weather weather = weatherApiService.getWeatherForLocation(location);
-                locationWeatherMap.put(location, weather);
+
+                WeatherDto weatherDto = new WeatherDto(
+                        weather.getId(),
+                        weather.getCurrentState(),
+                        weather.getDescription()
+                );
+                Integer dtoId = weatherDto.getId();
+                char firstNumOfId = dtoId.toString().charAt(0);
+                weatherDto.setId((int) firstNumOfId);
+
+                locationWeatherMap.put(location, weatherDto);
             }
         } catch (InterruptedException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
