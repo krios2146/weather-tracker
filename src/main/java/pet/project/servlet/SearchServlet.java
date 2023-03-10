@@ -45,13 +45,37 @@ public class SearchServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // TODO: Repeated code - extract to CookieService
+        Cookie[] cookies = req.getCookies();
+
+        // TODO: Repeated code
+        if (cookies == null) {
+            context.clearVariables();
+            templateEngine.process("home", context, resp.getWriter());
+            return;
+        }
+
+        Optional<Cookie> sessionIdCookie = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("sessionId"))
+                .findFirst();
+
+        if (sessionIdCookie.isEmpty()) {
+            context.clearVariables();
+            templateEngine.process("home", context, resp.getWriter());
+            return;
+        }
+
+        String sessionId = sessionIdCookie.get().getValue();
+        Optional<Session> session = sessionDao.findById(UUID.fromString(sessionId));
+        User user = session.get().getUser();
+
         // TODO: Validation of query
-        // TODO: Validation of user (authenticated or not)
         String searchQuery = req.getParameter("q");
 
         // TODO: try-catch looks ugly (?)
         try {
             List<ApiLocation> foundLocations = weatherApiService.getLocationsByName(searchQuery);
+            context.setVariable("login", user.getLogin());
             context.setVariable("foundLocations", foundLocations);
             templateEngine.process("search", context, resp.getWriter());
         } catch (InterruptedException e) {
