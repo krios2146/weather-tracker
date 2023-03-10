@@ -24,7 +24,7 @@ import pet.project.util.TemplateEngineUtil;
 import java.io.IOException;
 import java.util.*;
 
-@WebServlet(name = "HomeServlet", urlPatterns = "/")
+@WebServlet(urlPatterns = "")
 public class HomeServlet extends HttpServlet {
 
     private final SessionDao sessionDao = new SessionDao();
@@ -50,6 +50,14 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // TODO: Repeated code - extract to CookieService
         Cookie[] cookies = req.getCookies();
+
+        // TODO: Repeated code
+        if (cookies == null) {
+            context.clearVariables();
+            templateEngine.process("home", context, resp.getWriter());
+            return;
+        }
+
         Optional<Cookie> sessionIdCookie = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals("sessionId"))
                 .findFirst();
