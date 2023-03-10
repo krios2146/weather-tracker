@@ -86,8 +86,8 @@ public class HomeServlet extends HttpServlet {
                         weather.getDescription()
                 );
                 Integer dtoId = weatherDto.getId();
-                char firstNumOfId = dtoId.toString().charAt(0);
-                weatherDto.setId((int) firstNumOfId);
+                String firstNumOfId = String.valueOf(dtoId.toString().charAt(0));
+                weatherDto.setId(Integer.parseInt(firstNumOfId));
 
                 locationWeatherMap.put(location, weatherDto);
             }
