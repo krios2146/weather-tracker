@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@WebServlet(name = "SignUpServlet", urlPatterns = "/sign-up")
+@WebServlet(urlPatterns = "/sign-up")
 public class SignUpServlet extends HttpServlet {
 
     private final UserDao userDao = new UserDao();
