@@ -5,10 +5,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Weather {
+    @JsonProperty("id")
+    private Integer id;
     @JsonProperty("main")
     private String currentState;
     @JsonProperty("description")
     private String description;
+
+    public Integer getId() {
+        return id;
+    }
 
     public String getCurrentState() {
         return currentState;
