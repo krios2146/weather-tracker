@@ -119,6 +119,7 @@ public class HomeServlet extends HttpServlet {
         userList.remove(user);
         location.setUsers(userList);
         locationDao.update(location);
+        resp.sendRedirect(req.getContextPath());
     }
 
     private WebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
