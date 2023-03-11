@@ -29,14 +29,16 @@ A web application for viewing current weather. The user can register and add one
 
 For more details see - [implementation details](#implementation-details)
 
-User related
+### User related
+
 > Classic authorization
 
 - Sign in
 - Sign up
 - Sign out
 
-Locations related
+### Locations related
+
 > Classic CRUD
 
 - **Search** a location to track the weather
@@ -48,34 +50,27 @@ Locations related
 
 ### Technologies / tools used
 
-Logic layer
+Logic layer -------------- **Java Servlet**
 
-- Java Servlet
+Data access layer ------- **Hibernate, PostgreSQL**
 
-Data access layer
+Interface ---------------- **Thymeleaf, HTML, Bootstrap**
 
-- Hibernate
-- PostgreSQL
+Misc --------------------- **Jackson, Maven**
 
-Interface
-
-- Thymeleaf
-- HTML + Bootstrap
-
-Misc
-
-- Jackson
-- Maven
+---
 
 ### Data Model
 
 ![ER Diagram](img/ER%20Diagram.svg)
 
-#### Relationships
+#### **Relationships**
 
 One user can have 0 or more different sessions, therefore relationship between `users` and `sessions` is one-to-many (optional)
 
 One user can have 0 or more locations in their list, same with location and their user list. Relationship between `users` and `locations` is many-to-many. Junction table locations_users have been created in order to implement this relationship. Note that relationship between `users` and junction table is one-to-many and optional. This is because a user can use the app without adding any location to their list, whereas a location entry cannot be created in the database without a user request.
+
+---
 
 ### Design patterns
 
@@ -87,11 +82,15 @@ The application contains **Model** classes which represents entities from databa
 
 The **View** layer of the application is managed by the Thymeleaf. HTML templates are used to dynamically generate the user interface.
 
+---
+
 ### Sessions & Cookies
 
 The application does not use Java servlet session objects, instead it creates a custom session objects. The reason for this is to learn how to work with the sessions manually. The Spring handles the sessions automaticaly out of the box which is great, but not for the learning process.
 
 After creating the session object is stored in the database. Id of this session object is stored inside the cookie which is transfered to the client. This allows the client to access their session on subsequent requests, as the server can retrieve the session object from the cookie.
+
+---
 
 ### Interface overview
 
@@ -112,7 +111,7 @@ From the search only available option is home page. The application will not all
 
 The sign in and sign up pages have links to each other, but to the home page yet.
 
-#### More detailed view with interface elements
+#### **More detailed view with interface elements**
 
 ![Detailed pages view](img/Pages.svg)
 
