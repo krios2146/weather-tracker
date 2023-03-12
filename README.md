@@ -9,27 +9,31 @@ A web application for viewing current weather. The user can register and add one
 
 ## Table of Content
 
-- [Application Features](#application-features)
-- [Application architecture](#application-architecture)
-  - [Technologies / tools used](#technologies--tools-used)
-  - [Data Model](#data-model)
-  - [Design patterns](#design-patterns)
-  - [Sessions & Cookies](#sessions--cookies)
-  - [Interface overview](#interface-overview)
-- [Implementation details](#implementation-details)
-  - [Sign in](#sign-in)
-  - [Sign up](#sign-up)
-  - [Sign out](#sign-out)
-  - [Search](#search)
-  - [Add](#add)
-  - [View](#view)
-  - [Delete](#delete)
+1. [Application Features](#1-application-features)  
+    1.1 [User related](#11-user-related)  
+    1.2 [Location related](#12-locations-related)
+2. [Application architecture](#2-application-architecture)  
+    2.1 [Technologies / tools used](#21-technologies--tools-used)  
+    2.2 [Data Model](#22-data-model)  
+        2.2.1 [Relationships](#221-relationships)  
+    2.3 [Design patterns](#23-design-patterns)  
+    2.4 [Sessions & Cookies](#24-sessions--cookies)  
+    2.5 [Interface overview](#25-interface-overview)  
+        2.5.1 [More detailed view with interface elements](#251-more-detailed-view-with-interface-elements)
+3. [Implementation details](#3-implementation-details)  
+    3.1 [Sign in](#31-sign-in)  
+    3.2 [Sign up](#32-sign-up)  
+    3.3 [Sign out](#33-sign-out)  
+    3.4 [Search](#34-search)  
+    3.5 [Add](#35-add)  
+    3.6 [View](#36-view)  
+    3.7 [Delete](#37-delete)  
 
-## Application Features
+## 1. Application Features
 
 For more details see - [implementation details](#implementation-details)
 
-### User related
+### 1.1 User related
 
 > Classic authorization
 
@@ -37,7 +41,7 @@ For more details see - [implementation details](#implementation-details)
 - Sign up
 - Sign out
 
-### Locations related
+### 1.2 Locations related
 
 > Classic CRUD
 
@@ -46,9 +50,9 @@ For more details see - [implementation details](#implementation-details)
 - **View** a list of locations with weather for each location
 - **Delete** a location from the tracked list
 
-## Application architecture
+## 2. Application architecture
 
-### Technologies / tools used
+### 2.1 Technologies / tools used
 
 Logic layer -------------- **Java Servlet**
 
@@ -60,11 +64,11 @@ Misc --------------------- **Jackson, Maven**
 
 ---
 
-### Data Model
+### 2.2 Data Model
 
 ![ER Diagram](img/ER%20Diagram.svg)
 
-#### **Relationships**
+#### **2.2.1 Relationships**
 
 One user can have 0 or more different sessions, therefore relationship between `users` and `sessions` is one-to-many (optional)
 
@@ -72,7 +76,7 @@ One user can have 0 or more locations in their list, same with location and thei
 
 ---
 
-### Design patterns
+### 2.3 Design patterns
 
 Application uses [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) pattern.
 
@@ -84,7 +88,7 @@ The **View** layer of the application is managed by the Thymeleaf. HTML template
 
 ---
 
-### Sessions & Cookies
+### 2.4 Sessions & Cookies
 
 The application does not use Java servlet session objects, instead it creates a custom session objects. The reason for this is to learn how to work with the sessions manually. The Spring handles the sessions automaticaly out of the box which is great, but not for the learning process.
 
@@ -92,7 +96,7 @@ After creating the session object is stored in the database. Id of this session 
 
 ---
 
-### Interface overview
+### 2.5 Interface overview
 
 The application have 4 available to user pages
 
@@ -111,38 +115,38 @@ From the search only available option is home page. The application will not all
 
 The sign in and sign up pages have links to each other, but to the home page yet.
 
-#### **More detailed view with interface elements**
+#### **2.5.1 More detailed view with interface elements**
 
 ![Detailed pages view](img/Pages.svg)
 
 Actually, the home and the search pages almost identical, and the same can be said about the sign in and sign up pages, but each page serves it's own purpose.
 
-## Implementation details
+## 3. Implementation details
 
-### Sign in
+### 3.1 Sign in
 
 ![Sign in feature diagram](img/Sign-in.svg)
 
-### Sign up
+### 3.2 Sign up
 
 ![Sign up feature diagram](img/Sign-up.svg)
 
-### Sign out
+### 3.3 Sign out
 
 ![Sign out feature diagram](img/Sign-out.svg)
 
-### Search
+### 3.4 Search
 
 ![Search feature diagram](img/Search.svg)
 
-### Add
+### 3.5 Add
 
 ![Add feature diagram](img/Add.svg)
 
-### View
+### 3.6 View
 
 ![View feature diagram](img/View.svg)
 
-### Delete
+### 3.7 Delete
 
 ![Delete feature diagram](img/Delete.svg)
