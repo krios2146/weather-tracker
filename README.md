@@ -31,7 +31,7 @@ A web application for viewing current weather. The user can register and add one
 
 ## 1. Application Features
 
-For more details see - [implementation details](#implementation-details)
+For more details see - [implementation details](#3-implementation-details)
 
 ### 1.1 User related
 
@@ -54,13 +54,7 @@ For more details see - [implementation details](#implementation-details)
 
 ### 2.1 Technologies / tools used
 
-Logic layer -------------- **Java Servlet**
-
-Data access layer ------- **Hibernate, PostgreSQL**
-
-Interface ---------------- **Thymeleaf, HTML, Bootstrap**
-
-Misc --------------------- **Jackson, Maven**
+![Tools diagram](img/Tools.svg)
 
 ---
 
