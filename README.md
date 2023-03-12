@@ -52,6 +52,8 @@ For more details see - [implementation details](#3-implementation-details)
 
 ## 2. Application architecture
 
+This section shows the overall structure of the app and tries to clarify any unclear or questionable aspects.
+
 ### 2.1 Technologies / tools used
 
 ![Tools diagram](img/Tools.svg)
@@ -62,11 +64,15 @@ For more details see - [implementation details](#3-implementation-details)
 
 ![ER Diagram](img/ER%20Diagram.svg)
 
+The application have three main entities - User, Session and Location.
+
 #### **2.2.1 Relationships**
 
 One user can have 0 or more different sessions, therefore relationship between `users` and `sessions` is one-to-many (optional)
 
-One user can have 0 or more locations in their list, same with location and their user list. Relationship between `users` and `locations` is many-to-many. Junction table locations_users have been created in order to implement this relationship. Note that relationship between `users` and junction table is one-to-many and optional. This is because a user can use the app without adding any location to their list, whereas a location entry cannot be created in the database without a user request.
+One user can have 0 or more locations in their list, same with location and their user list. Relationship between `users` and `locations` is many-to-many. Junction table locations_users have been created in order to implement this relationship.  
+> **Note**  
+> Note that relationship between `users` and junction table is one-to-many and optional. This is because a user can use the app without adding any location to their list, whereas a location entry cannot be created in the database without a user request.
 
 ---
 
@@ -116,6 +122,10 @@ The sign in and sign up pages have links to each other, but to the home page yet
 Actually, the home and the search pages almost identical, and the same can be said about the sign in and sign up pages, but each page serves it's own purpose.
 
 ## 3. Implementation details
+
+This section contains diagrams and descriptions for every feature of the app.
+
+The diagrams are intented to be descriptive, short, clear and easy to understand. As a result, some details are omitted for brevity, but they can be found in the description of each feature.
 
 ### 3.1 Sign in
 
