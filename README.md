@@ -64,7 +64,7 @@ This section shows the overall structure of the app and tries to clarify any unc
 
 ### 2.2 Data Model
 
-![ER Diagram](img/ER%20Diagram.svg)
+![Entity Relationship Diagram](img/entity-relationship-diagram.svg)
 
 The application have three main entities - User, Session and Location.
 
@@ -78,7 +78,8 @@ between `users` and `locations` is many-to-many. Junction table locations_users 
 this relationship.
 > **Note**  
 > Note that relationship between `users` and junction table is one-to-many and optional. This is because a user can use
-> the app without adding any location to their list, whereas a location entry cannot be created in the database without a
+> the app without adding any location to their list, whereas a location entry cannot be created in the database without
+> a
 > user request.
 
 ---
@@ -121,7 +122,7 @@ The application have 4 available to user pages
 
 They have the following relationships
 
-![Pages relationships](img/Pages%20simple.svg)
+![Pages relationships](img/pages-relationship-diagram.svg)
 
 From the home page user can access any other page.
 
