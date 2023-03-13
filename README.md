@@ -209,3 +209,9 @@ The diagrams are intented to be descriptive, short, clear and easy to understand
 ### 3.7 Delete
 
 ![Delete feature diagram](img/Delete.svg)
+
+1. The client sends a POST request with the location id to the server.
+2. Assuming that the client is already authorized and the cookies with the session ID persist in the request, the controller gets the session ID from the cookies, finds the corresponding session in the database, and gets the user from the session object.
+3. The controller gets the session object from the database by its id.
+4. The controller gets a list of users of this location, deletes the current user from this list, and updates the location entity in the database.
+5. The controller redirects the client to the home page to apply the changes and ensure that the updated list of locations is displayed.
