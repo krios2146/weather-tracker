@@ -162,6 +162,13 @@ The diagrams are intented to be descriptive, short, clear and easy to understand
 
 ![Sign out feature diagram](img/Sign-out.svg)
 
+1. The client sends a GET request with the cookies that contain the session id.
+2. The controler accepts this request, gets the session id from the cookies and tries to find a session in the databse by this id. Assuming that the client is already authorized and the cookies with the session id persisit in the request. If not, the controller will show an error message.
+3. If the session is not found in the database, it means that somehow the cookies store an id of the session that no longer exist (or an id of the session that has never existed). The controller shows an error message.
+4. The controller terminates the current client session by deleting it from the database.
+
+---
+
 ### 3.4 Search
 
 ![Search feature diagram](img/Search.svg)
