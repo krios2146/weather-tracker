@@ -31,6 +31,7 @@ A web application for viewing current weather. The user can register and add one
 
 ## 1. Application Features
 
+This section shows the overall structure of the app features.  
 For more details see - [implementation details](#3-implementation-details)
 
 ### 1.1 User related
