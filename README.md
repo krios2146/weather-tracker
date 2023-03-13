@@ -173,6 +173,14 @@ The diagrams are intented to be descriptive, short, clear and easy to understand
 
 ![Search feature diagram](img/Search.svg)
 
+1. The client sends a GET request with the `q` parameter that contain a search query.
+2. If the request does not contain cookies or the session id in these cookies, it means that the client is not authorized. The controller redirects the client to the sign in page.
+3. If the `q` parameter of the request is not valid i.e. is empty, the controller will show an error meassge.
+4. The controller constructs the request and calls the external [OpenWeather API](https://openweathermap.org/api)
+5. The controller processes response from the external API and sends the search results to the the client
+
+---
+
 ### 3.5 Add
 
 ![Add feature diagram](img/Add.svg)
