@@ -185,6 +185,14 @@ The diagrams are intented to be descriptive, short, clear and easy to understand
 
 ![Add feature diagram](img/Add.svg)
 
+1. The client sends a POST request with the location data to the server.
+2. If the request does not contain cookies or the session id in these cookies, it means that the client is not authorized. The controller redirects the client to the sign in page.
+3. The controller gets the session id from the cookies, finds the corresponding session in the database, and gets the user from the session object.
+4. The controller gets the request parameters (location data), creates a new location object using these parameters, adds the current user to the list of users of this location, and saves the location entity to the database.
+5. The controller redirects the client to the home page.
+
+---
+
 ### 3.6 View
 
 ![View feature diagram](img/View.svg)
