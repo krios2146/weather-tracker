@@ -64,5 +64,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.14.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.password4j/password4j -->
+        <dependency>
+            <groupId>com.password4j</groupId>
+            <artifactId>password4j</artifactId>
+            <version>1.7.0</version>
+        </dependency>
     </dependencies>
 </project>

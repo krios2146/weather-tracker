@@ -1,5 +1,7 @@
 package pet.project.servlet;
 
+import com.password4j.Hash;
+import com.password4j.Password;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -48,7 +50,9 @@ public class SignUpServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
 
-        User user = new User(login, password);
+        Hash hash = Password.hash(password).withBcrypt();
+
+        User user = new User(login, hash.getResult());
 
         // TODO: Properly handle all Exceptions
         if (userDao.isPresent(user)) {

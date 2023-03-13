@@ -1,5 +1,6 @@
 package pet.project.servlet;
 
+import com.password4j.Password;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -51,7 +52,9 @@ public class SignInServlet extends HttpServlet {
         Optional<User> optionalUser = userDao.findByLogin(login);
         User user = optionalUser.orElseThrow();
 
-        if (!user.getPassword().equals(password)) {
+        String passwordFromDb = user.getPassword();
+
+        if (!Password.check(password, passwordFromDb).withBcrypt()) {
             throw new RuntimeException("Authorization exception: wrong password");
         }
 
