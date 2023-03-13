@@ -128,9 +128,20 @@ This section contains diagrams and descriptions for every feature of the app.
 
 The diagrams are intented to be descriptive, short, clear and easy to understand. As a result, some details are omitted for brevity, but they can be found in the description of each feature.
 
+> **Note**  
+> A client - actual user of the app  
+> A user - entitiy in the database
+
 ### 3.1 Sign in
 
 ![Sign in feature diagram](img/Sign-in.svg)
+
+1. The client fills out the sign-in form with the `username` and `password` fields and send this form to the server within a **POST** request.
+2. The controller accept this request, gets parameters from it, and tries to find a user in the database by the username.
+3. If the user is not found in the database, it means that the client provided invalid credentials. The controller shows an error message.
+4. If the user's password and the password provided by the client do not match, it again means that the client provided invalid credentials. The controller shows an error message.
+5. The controller creates a session for the user and saves this session to the database.
+6. The controller creates cookies with the id of the created session and sends these cookies with the response to the client.
 
 ### 3.2 Sign up
 
