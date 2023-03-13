@@ -88,7 +88,7 @@ this relationship.
 
 Application uses [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) pattern.
 
-The servlets act as **Controllers**. They handles user's requests and perform buisness logic.
+The servlets act as **Controllers**. They handle user's requests and perform business logic.
 
 The application contains **Model** classes which represents entities from
 database. [DAO](https://en.wikipedia.org/wiki/Data_access_object) objects are used to retrieve and persist data in the
@@ -102,11 +102,11 @@ user interface.
 ### 2.4 Sessions & Cookies
 
 The application does not use Java servlet session objects, instead it creates a custom session objects. The reason for
-this is to learn how to work with the sessions manually. The Spring handles the sessions automaticaly out of the box
+this is to learn how to work with the sessions manually. The Spring handles the sessions automatically out of the box
 which is great, but not for the learning process.
 
-After creating the session object is stored in the database. Id of this session object is stored inside the cookie which
-is transfered to the client. This allows the client to access their session on subsequent requests, as the server can
+After creating the session object is stored in the database. ID of this session object is stored inside the cookie which
+is transferred to the client. This allows the client to access their session on subsequent requests, as the server can
 retrieve the session object from the cookie.
 
 ---
@@ -126,7 +126,7 @@ They have the following relationships
 
 From the home page user can access any other page.
 
-From the search only available option is home page. The application will not allow user to search locations if thiey are
+From the search only available option is home page. The application will not allow user to search locations if they are
 not authorized.
 
 The sign in and sign up pages have links to each other, but to the home page yet.
@@ -136,13 +136,13 @@ The sign in and sign up pages have links to each other, but to the home page yet
 ![Detailed pages view](img/pages-relationship-details-diagram.svg)
 
 Actually, the home and the search pages almost identical, and the same can be said about the sign in and sign up pages,
-but each page serves it's own purpose.
+but each page serves its own purpose.
 
 ## 3. Implementation details
 
 This section contains diagrams and descriptions for every feature of the app.
 
-The diagrams are intented to be descriptive, short, clear and easy to understand. As a result, some details are omitted
+The diagrams are intended to be descriptive, short, clear and easy to understand. As a result, some details are omitted
 for brevity, but they can be found in the description of each feature.
 
 > **Note**  
@@ -162,7 +162,7 @@ for brevity, but they can be found in the description of each feature.
 4. If the user's password and the password provided by the client do not match, it again means that the client provided
    invalid credentials. The controller shows an error message.
 5. The controller creates a session for the user and saves this session to the database.
-6. The controller creates cookies with the id of the created session and sends these cookies with the response to the
+6. The controller creates cookies with the ID of the created session and sends these cookies with the response to the
    client.
 
 ---
@@ -179,7 +179,7 @@ for brevity, but they can be found in the description of each feature.
    controller shows an error message.
 4. The controller creates a user object from the provided credentials, and saves it to the database.
 5. The controller creates a session for the user and saves this session to the database.
-6. The controller creates cookies with the id of the created session and sends these cookies with the response to the
+6. The controller creates cookies with the ID of the created session and sends these cookies with the response to the
    client.
 
 ---
@@ -188,12 +188,12 @@ for brevity, but they can be found in the description of each feature.
 
 ![Sign out feature diagram](img/sign-out-feature-diagram.svg)
 
-1. The client sends a GET request with the cookies that contain the session id.
-2. The controler accepts this request, gets the session id from the cookies and tries to find a session in the databse
-   by this id. Assuming that the client is already authorized and the cookies with the session id persisit in the
+1. The client sends a GET request with the cookies that contain the session ID.
+2. The controller accepts this request, gets the session ID from the cookies and tries to find a session in the database
+   by this ID. Assuming that the client is already authorized and the cookies with the session ID persist in the
    request. If not, the controller will show an error message.
-3. If the session is not found in the database, it means that somehow the cookies store an id of the session that no
-   longer exist (or an id of the session that has never existed). The controller shows an error message.
+3. If the session is not found in the database, it means that somehow the cookies store an ID of the session that no
+   longer exist (or an ID of the session that has never existed). The controller shows an error message.
 4. The controller terminates the current client session by deleting it from the database.
 
 ---
@@ -203,11 +203,11 @@ for brevity, but they can be found in the description of each feature.
 ![Search feature diagram](img/search-feature-diagram.svg)
 
 1. The client sends a GET request with the `q` parameter that contain a search query.
-2. If the request does not contain cookies or the session id in these cookies, it means that the client is not
-   authorized. The controller redirects the client to the sign in page.
-3. If the `q` parameter of the request is not valid i.e. is empty, the controller will show an error meassge.
+2. If the request does not contain cookies or the session ID in these cookies, it means that the client is not
+   authorized. The controller redirects the client to the sign-in page.
+3. If the `q` parameter of the request is not valid i.e. is empty, the controller will show an error message.
 4. The controller constructs the request and calls the external [OpenWeather API](https://openweathermap.org/api)
-5. The controller processes response from the external API and sends the search results to the the client
+5. The controller processes response from the external API and sends the search results to the client
 
 ---
 
@@ -216,9 +216,9 @@ for brevity, but they can be found in the description of each feature.
 ![Add feature diagram](img/add-feature-diagram.svg)
 
 1. The client sends a POST request with the location data to the server.
-2. If the request does not contain cookies or the session id in these cookies, it means that the client is not
-   authorized. The controller redirects the client to the sign in page.
-3. The controller gets the session id from the cookies, finds the corresponding session in the database, and gets the
+2. If the request does not contain cookies or the session ID in these cookies, it means that the client is not
+   authorized. The controller redirects the client to the sign-in page.
+3. The controller gets the session ID from the cookies, finds the corresponding session in the database, and gets the
    user from the session object.
 4. The controller gets the request parameters (location data), creates a new location object using these parameters,
    adds the current user to the list of users of this location, and saves the location entity to the database.
@@ -237,7 +237,7 @@ for brevity, but they can be found in the description of each feature.
 3. The controller gets all the locations of this user from the database.
 4. The controller constructs the request and calls the external [OpenWeather API](https://openweathermap.org/api).
 5. Since the external API can process only one location per request, the controller sends requests until it processes
-   all of the locations. In the process of calling the API, the controller creates a list of weather (API responses).
+   all the locations. In the process of calling the API, the controller creates a list of weather (API responses).
 6. The controller sends the completed list of weather to the client.
 
 ---
@@ -246,11 +246,11 @@ for brevity, but they can be found in the description of each feature.
 
 ![Delete feature diagram](img/delete-feature-diagram.svg)
 
-1. The client sends a POST request with the location id to the server.
+1. The client sends a POST request with the location ID to the server.
 2. Assuming that the client is already authorized and the cookies with the session ID persist in the request, the
    controller gets the session ID from the cookies, finds the corresponding session in the database, and gets the user
    from the session object.
-3. The controller gets the session object from the database by its id.
+3. The controller gets the session object from the database by its ID.
 4. The controller gets a list of users of this location, deletes the current user from this list, and updates the
    location entity in the database.
 5. The controller redirects the client to the home page to apply the changes and ensure that the updated list of
