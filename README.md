@@ -197,6 +197,15 @@ The diagrams are intented to be descriptive, short, clear and easy to understand
 
 ![View feature diagram](img/View.svg)
 
+1. The client sends a GET request to the server.
+2. Assuming that the client is already authorized and the cookies with the session ID persist in the request, the controller gets the session ID from the cookies, finds the corresponding session in the database, and gets the user from the session object.
+3. The controller gets all the locations of this user from the database.
+4. The controller constructs the request and calls the external [OpenWeather API](https://openweathermap.org/api).
+5. Since the external API can process only one location per request, the controller sends requests until it processes all of the locations. In the process of calling the API, the controller creates a list of weather (API responses).
+6. The controller sends the completed list of weather to the client.
+
+---
+
 ### 3.7 Delete
 
 ![Delete feature diagram](img/Delete.svg)
