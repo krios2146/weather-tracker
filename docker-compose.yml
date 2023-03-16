@@ -4,3 +4,13 @@ services:
     build: .
     ports:
       - "8080:8080"
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: java
+      POSTGRES_PASSWORD: java
+      POSTGRES_DB: weather-tracker
