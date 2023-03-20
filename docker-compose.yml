@@ -2,6 +2,10 @@ version: '3.9'
 services:
   weather-tracker:
     build: .
+    environment:
+      JAKARTA_PERSISTENCE_JDBC_URL: jdbc:postgresql://db:5432/weather-tracker
+      JAKARTA_PERSISTENCE_JDBC_USER: java
+      JAKARTA_PERSISTENCE_JDBC_PASSWORD: java
     ports:
       - "8080:8080"
     depends_on:
