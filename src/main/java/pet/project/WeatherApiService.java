@@ -30,7 +30,7 @@ public class WeatherApiService {
         ObjectMapper objectMapper = new ObjectMapper();
         WeatherApiResponse weatherApiResponse = objectMapper.readValue(response.body(), WeatherApiResponse.class);
         // TODO: Always contain only one element
-        List<WeatherApiModel> weatherList = weatherApiResponse.getWeather();
+        List<WeatherApiModel> weatherList = weatherApiResponse.getWeatherList();
         return weatherList.get(0);
     }
 
