@@ -49,12 +49,16 @@ public class SignInServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         Optional<User> optionalUser = userDao.findByLogin(login);
+
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("Authentication failed: no user with given login found");
+        }
         User user = optionalUser.orElseThrow();
 
         String passwordFromDb = user.getPassword();
 
         if (!Password.check(password, passwordFromDb).withBcrypt()) {
-            throw new RuntimeException("Authorization exception: wrong password");
+            throw new RuntimeException("Authentication failed: wrong password");
         }
 
         Session session = new Session(UUID.randomUUID(), user, LocalDateTime.now().plusHours(24));
