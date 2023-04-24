@@ -2,7 +2,6 @@ package pet.project.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import pet.project.model.User;
 import pet.project.util.EntityManagerFactoryUtil;
@@ -17,19 +16,6 @@ public class UserDao {
         query.setParameter("login", login);
         User user = query.getSingleResult();
         return Optional.ofNullable(user);
-    }
-
-    public boolean isPresent(User user) {
-        Query query = entityManager.createQuery("SELECT COUNT(*) FROM User u " +
-                "WHERE u.login = :login AND " +
-                "u.password = :password"
-        );
-
-        query.setParameter("login", user.getLogin());
-        query.setParameter("password", user.getPassword());
-
-        Long result = (Long) query.getSingleResult();
-        return result > 0;
     }
 
     public void save(User entity) {
