@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pet.project.model.Location;
 import pet.project.model.api.LocationApiResponse;
-import pet.project.model.api.Weather;
+import pet.project.model.api.WeatherApiModel;
 import pet.project.model.api.WeatherApiResponse;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class WeatherApiService {
 
     private final HttpClient client = HttpClient.newHttpClient();
 
-    public Weather getWeatherForLocation(Location location) throws IOException, InterruptedException {
+    public WeatherApiModel getWeatherForLocation(Location location) throws IOException, InterruptedException {
         URI uri = buildUriForWeatherRequest(location);
         HttpRequest request = buildRequest(uri);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -30,7 +30,7 @@ public class WeatherApiService {
         ObjectMapper objectMapper = new ObjectMapper();
         WeatherApiResponse weatherApiResponse = objectMapper.readValue(response.body(), WeatherApiResponse.class);
         // TODO: Always contain only one element
-        List<Weather> weatherList = weatherApiResponse.getWeather();
+        List<WeatherApiModel> weatherList = weatherApiResponse.getWeather();
         return weatherList.get(0);
     }
 

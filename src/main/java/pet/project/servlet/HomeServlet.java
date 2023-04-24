@@ -18,7 +18,7 @@ import pet.project.dao.SessionDao;
 import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
-import pet.project.model.api.Weather;
+import pet.project.model.api.WeatherApiModel;
 import pet.project.model.dto.WeatherDto;
 import pet.project.util.TemplateEngineUtil;
 
@@ -78,7 +78,7 @@ public class HomeServlet extends HttpServlet {
         Map<Location, WeatherDto> locationWeatherMap = new HashMap<>();
         try {
             for (Location location : userLocations) {
-                Weather weather = weatherApiService.getWeatherForLocation(location);
+                WeatherApiModel weather = weatherApiService.getWeatherForLocation(location);
 
                 WeatherDto weatherDto = new WeatherDto(
                         weather.getId(),
