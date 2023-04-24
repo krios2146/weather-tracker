@@ -104,12 +104,27 @@ public class HomeServlet extends HttpServlet {
 
         User user = sessionOptional.get().getUser();
 
-        Long locationId = Long.parseLong(req.getParameter("locationId"));
-        Location location = locationDao.findById(locationId).orElseThrow();
-        List<User> userList = location.getUsers();
-        userList.remove(user);
-        location.setUsers(userList);
+        String locationParam = req.getParameter("locationId");
+
+        if (locationParam == null || locationParam.isBlank()) {
+            throw new RuntimeException("Id of a location to delete is empty");
+        }
+
+        Long locationId = Long.parseLong(locationParam);
+
+        Optional<Location> locationOptional = locationDao.findById(locationId);
+
+        if (locationOptional.isEmpty()) {
+            throw new RuntimeException("Location with given id is not found in the database");
+        }
+
+        Location location = locationOptional.get();
+
+        List<User> users = location.getUsers();
+        users.remove(user);
+        location.setUsers(users);
         locationDao.update(location);
+
         resp.sendRedirect(req.getContextPath());
     }
 
