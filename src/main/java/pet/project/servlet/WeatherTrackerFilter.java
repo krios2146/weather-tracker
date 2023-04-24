@@ -2,7 +2,7 @@ package pet.project.servlet;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
-import pet.project.util.TemplateEngineUtil;
+import pet.project.util.ThymeleafUtil;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ public class WeatherTrackerFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        TemplateEngineUtil.buildTemplateEngine(filterConfig.getServletContext());
+        ThymeleafUtil.buildTemplateEngine(filterConfig.getServletContext());
     }
 
     @Override

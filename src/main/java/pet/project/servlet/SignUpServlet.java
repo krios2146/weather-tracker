@@ -18,7 +18,7 @@ import pet.project.dao.SessionDao;
 import pet.project.dao.UserDao;
 import pet.project.model.Session;
 import pet.project.model.User;
-import pet.project.util.TemplateEngineUtil;
+import pet.project.util.ThymeleafUtil;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -29,7 +29,7 @@ import java.util.UUID;
 public class SignUpServlet extends HttpServlet {
     private final UserDao userDao = new UserDao();
     private final SessionDao sessionDao = new SessionDao();
-    private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
+    private final ITemplateEngine templateEngine = ThymeleafUtil.getTemplateEngine();
     private IWebContext context;
 
     @Override

@@ -21,7 +21,7 @@ import pet.project.model.api.WeatherApiModel;
 import pet.project.model.dto.WeatherDto;
 import pet.project.service.CookieService;
 import pet.project.service.WeatherApiService;
-import pet.project.util.TemplateEngineUtil;
+import pet.project.util.ThymeleafUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +36,7 @@ public class HomeServlet extends HttpServlet {
     private final LocationDao locationDao = new LocationDao();
     private final WeatherApiService weatherApiService = new WeatherApiService();
     private final CookieService cookieService = new CookieService();
-    private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
+    private final ITemplateEngine templateEngine = ThymeleafUtil.getTemplateEngine();
     private WebContext context;
 
     @Override
