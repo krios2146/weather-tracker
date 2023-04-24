@@ -28,11 +28,11 @@ import java.util.UUID;
 
 @WebServlet(urlPatterns = "/search")
 public class SearchServlet extends HttpServlet {
+    private final SessionDao sessionDao = new SessionDao();
+    private final LocationDao locationDao = new LocationDao();
     private final WeatherApiService weatherApiService = new WeatherApiService();
     private final CookieService cookieService = new CookieService();
     private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
-    private final SessionDao sessionDao = new SessionDao();
-    private final LocationDao locationDao = new LocationDao();
     private WebContext context;
 
     @Override
@@ -44,7 +44,7 @@ public class SearchServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Cookie[] cookies = req.getCookies();
         Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
 
@@ -63,24 +63,27 @@ public class SearchServlet extends HttpServlet {
         }
 
         User user = sessionOptional.get().getUser();
-        // TODO: Validation of query
+
         String searchQuery = req.getParameter("q");
 
-        // TODO: try-catch looks ugly (?)
+        if (searchQuery == null || searchQuery.isBlank()) {
+            throw new RuntimeException("Search query is invalid");
+        }
+
         try {
             List<LocationApiResponse> foundLocations = weatherApiService.getLocationsByName(searchQuery);
             context.setVariable("login", user.getLogin());
             context.setVariable("foundLocations", foundLocations);
             templateEngine.process("search", context, resp.getWriter());
+
         } catch (InterruptedException e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             templateEngine.process("error", context, resp.getWriter());
             throw new RuntimeException("Issues with geocoding api call");
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Cookie[] cookies = req.getCookies();
         Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
 
@@ -100,35 +103,45 @@ public class SearchServlet extends HttpServlet {
 
         User user = sessionOptional.get().getUser();
 
-        Location location = new Location(
-                req.getParameter("name"),
-                List.of(user),
-                Double.valueOf(req.getParameter("latitude")),
-                Double.valueOf(req.getParameter("longitude"))
-        );
+        String name = req.getParameter("name");
+        if (name == null || name.isBlank()) {
+            throw new RuntimeException("Parameter name is invalid");
+        }
 
-        if (locationDao.isPresent(location)) {
-            Location locationFromDatabase = findSameLocationInDatabase(location);
-            List<User> userList = locationFromDatabase.getUsers();
-            userList.add(user);
-            locationFromDatabase.setUsers(userList);
-            locationDao.update(locationFromDatabase);
+        String latitudeParam = req.getParameter("latitude");
+        if (latitudeParam == null || latitudeParam.isBlank()) {
+            throw new RuntimeException("Parameter latitude is invalid");
+        }
+
+        String longitudeParam = req.getParameter("longitude");
+        if (longitudeParam == null || longitudeParam.isBlank()) {
+            throw new RuntimeException("Parameter longitude is invalid");
+        }
+
+        Double latitude = Double.valueOf(latitudeParam);
+        Double longitude = Double.valueOf(longitudeParam);
+
+        Optional<Location> locationOptional = locationDao.findByCoordinates(latitude, longitude);
+
+        if (locationOptional.isPresent()) {
+            Location location = locationOptional.get();
+
+            List<User> users = location.getUsers();
+            users.add(user);
+            location.setUsers(users);
+
+            locationDao.update(location);
         } else {
+            Location location = new Location(
+                    name,
+                    List.of(user),
+                    latitude,
+                    longitude
+            );
             locationDao.save(location);
         }
-        resp.sendRedirect(req.getContextPath());
-    }
 
-    private Location findSameLocationInDatabase(Location location) {
-        List<Location> similarNameLocations = locationDao.findByName(location.getName());
-        Optional<Location> locationOptional = similarNameLocations.stream()
-                .filter(l -> {
-                    if (!l.getName().equals(location.getName())) return false;
-                    if (!l.getLongitude().equals(location.getLongitude())) return false;
-                    return l.getLatitude().equals(location.getLatitude());
-                })
-                .findFirst();
-        return locationOptional.get();
+        resp.sendRedirect(req.getContextPath());
     }
 
     private WebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
