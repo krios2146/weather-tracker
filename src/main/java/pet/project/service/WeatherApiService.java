@@ -29,8 +29,13 @@ public class WeatherApiService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         WeatherApiResponse weatherApiResponse = objectMapper.readValue(response.body(), WeatherApiResponse.class);
-        // TODO: Always contain only one element
+
         List<WeatherApiModel> weatherList = weatherApiResponse.getWeatherList();
+
+        if (weatherList.size() < 1) {
+            throw new RuntimeException("There is no weather found for given location");
+        }
+
         return weatherList.get(0);
     }
 
@@ -40,11 +45,11 @@ public class WeatherApiService {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         ObjectMapper objectMapper = new ObjectMapper();
-        List<LocationApiResponse> apiLocationList = objectMapper.readValue(
+        return objectMapper.readValue(
                 response.body(),
                 new TypeReference<List<LocationApiResponse>>() {
-                });
-        return apiLocationList;
+                }
+        );
     }
 
     private static HttpRequest buildRequest(URI uri) {
