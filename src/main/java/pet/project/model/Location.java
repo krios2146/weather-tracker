@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "locations")
+@Table(name = "locations", uniqueConstraints = {@UniqueConstraint(columnNames = {"latitude", "longitude"})})
 public class Location {
     @Id
     @SequenceGenerator(name = "locations_seq", sequenceName = "locations_seq", allocationSize = 1)
