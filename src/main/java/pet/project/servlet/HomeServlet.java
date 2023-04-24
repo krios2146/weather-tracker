@@ -24,7 +24,11 @@ import pet.project.service.WeatherApiService;
 import pet.project.util.TemplateEngineUtil;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @WebServlet(urlPatterns = "")
 public class HomeServlet extends HttpServlet {
@@ -70,28 +74,11 @@ public class HomeServlet extends HttpServlet {
         User user = sessionOptional.get().getUser();
         List<Location> userLocations = locationDao.findByUser(user);
 
-        // TODO: `sendError` is a "terminate" method + maybe use Stream API
-        Map<Location, WeatherDto> locationWeatherMap = new HashMap<>();
-        try {
-            for (Location location : userLocations) {
-                WeatherApiModel weather = weatherApiService.getWeatherForLocation(location);
-
-                WeatherDto weatherDto = new WeatherDto(
-                        weather.getId(),
-                        weather.getCurrentState(),
-                        weather.getDescription()
-                );
-                // TODO: ???
-                Integer dtoId = weatherDto.getId();
-                String firstNumOfId = String.valueOf(dtoId.toString().charAt(0));
-                weatherDto.setId(Integer.parseInt(firstNumOfId));
-
-                locationWeatherMap.put(location, weatherDto);
-            }
-        } catch (InterruptedException e) {
-            templateEngine.process("error", context, resp.getWriter());
-            throw new RuntimeException("Issues with weather API call", e.getCause());
-        }
+        Map<Location, WeatherDto> locationWeatherMap = userLocations.stream()
+                .collect(Collectors.toMap(
+                        location -> location,
+                        this::getWeather
+                ));
 
         context.setVariable("locationWeatherMap", locationWeatherMap);
         context.setVariable("login", user.getLogin());
@@ -131,5 +118,28 @@ public class HomeServlet extends HttpServlet {
         JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(servletContext);
         IServletWebExchange webExchange = application.buildExchange(req, resp);
         return new WebContext(webExchange);
+    }
+
+    private WeatherDto getWeather(Location location) {
+        try {
+            WeatherApiModel weather = weatherApiService.getWeatherForLocation(location);
+            return buildWeatherDto(weather);
+        } catch (Exception e) {
+            throw new RuntimeException("Issues with weather API call", e);
+        }
+    }
+
+    private static WeatherDto buildWeatherDto(WeatherApiModel weather) {
+        return new WeatherDto(
+                getFirstNumber(weather.getId()),
+                weather.getCurrentState(),
+                weather.getDescription()
+        );
+    }
+
+    private static Integer getFirstNumber(Integer number) {
+        char firstNumberChar = number.toString().charAt(0);
+        String firstNumberString = String.valueOf(firstNumberChar);
+        return Integer.parseInt(firstNumberString);
     }
 }
