@@ -11,13 +11,13 @@ import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.web.servlet.IServletWebExchange;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
-import pet.project.WeatherApiService;
 import pet.project.dao.LocationDao;
 import pet.project.dao.SessionDao;
 import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
 import pet.project.model.api.LocationApiResponse;
+import pet.project.service.WeatherApiService;
 import pet.project.util.TemplateEngineUtil;
 
 import java.io.IOException;

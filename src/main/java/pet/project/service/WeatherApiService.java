@@ -1,4 +1,4 @@
-package pet.project;
+package pet.project.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
