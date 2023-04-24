@@ -15,11 +15,11 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import pet.project.WeatherApiService;
 import pet.project.dao.LocationDao;
 import pet.project.dao.SessionDao;
-import pet.project.dto.WeatherDto;
 import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
 import pet.project.model.api.Weather;
+import pet.project.model.dto.WeatherDto;
 import pet.project.util.TemplateEngineUtil;
 
 import java.io.IOException;
