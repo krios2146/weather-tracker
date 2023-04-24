@@ -17,19 +17,19 @@ import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
 import pet.project.model.api.LocationApiResponse;
+import pet.project.service.CookieService;
 import pet.project.service.WeatherApiService;
 import pet.project.util.TemplateEngineUtil;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @WebServlet(urlPatterns = "/search")
 public class SearchServlet extends HttpServlet {
-
     private final WeatherApiService weatherApiService = new WeatherApiService();
+    private final CookieService cookieService = new CookieService();
     private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
     private final SessionDao sessionDao = new SessionDao();
     private final LocationDao locationDao = new LocationDao();
@@ -45,30 +45,24 @@ public class SearchServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: Repeated code - extract to CookieService
         Cookie[] cookies = req.getCookies();
+        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
 
-        // TODO: Repeated code
-        if (cookies == null) {
+        if (cookieOptional.isEmpty()) {
             context.clearVariables();
             templateEngine.process("home", context, resp.getWriter());
             return;
         }
 
-        Optional<Cookie> sessionIdCookie = Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().equals("sessionId"))
-                .findFirst();
+        UUID sessionId = UUID.fromString(cookieOptional.get().getValue());
+        Optional<Session> sessionOptional = sessionDao.findById(sessionId);
 
-        if (sessionIdCookie.isEmpty()) {
-            context.clearVariables();
-            templateEngine.process("home", context, resp.getWriter());
+        if (sessionOptional.isEmpty()) {
+            resp.sendRedirect("/sign-in");
             return;
         }
 
-        String sessionId = sessionIdCookie.get().getValue();
-        Optional<Session> session = sessionDao.findById(UUID.fromString(sessionId));
-        User user = session.get().getUser();
-
+        User user = sessionOptional.get().getUser();
         // TODO: Validation of query
         String searchQuery = req.getParameter("q");
 
@@ -87,14 +81,24 @@ public class SearchServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: Repeated code - extract to CookieService
         Cookie[] cookies = req.getCookies();
-        Optional<Cookie> sessionIdCookie = Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().equals("sessionId"))
-                .findFirst();
-        String sessionId = sessionIdCookie.get().getValue();
-        Optional<Session> session = sessionDao.findById(UUID.fromString(sessionId));
-        User user = session.get().getUser();
+        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
+
+        if (cookieOptional.isEmpty()) {
+            context.clearVariables();
+            templateEngine.process("home", context, resp.getWriter());
+            return;
+        }
+
+        UUID sessionId = UUID.fromString(cookieOptional.get().getValue());
+        Optional<Session> sessionOptional = sessionDao.findById(sessionId);
+
+        if (sessionOptional.isEmpty()) {
+            resp.sendRedirect("/sign-in");
+            return;
+        }
+
+        User user = sessionOptional.get().getUser();
 
         Location location = new Location(
                 req.getParameter("name"),
