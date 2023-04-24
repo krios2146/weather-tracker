@@ -22,6 +22,7 @@ import pet.project.util.TemplateEngineUtil;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @WebServlet(urlPatterns = "/sign-up")
@@ -49,17 +50,24 @@ public class SignUpServlet extends HttpServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
 
+        if (login == null || login.isBlank()) {
+            throw new RuntimeException("Login is invalid");
+        }
+
+        if (password == null || password.isBlank()) {
+            throw new RuntimeException("Password is invalid");
+        }
+
         Hash hash = Password.hash(password).withBcrypt();
 
-        User user = new User(login, hash.getResult());
+        Optional<User> userOptional = userDao.findByLogin(login);
 
-        // TODO: Properly handle all Exceptions
-        if (userDao.isPresent(user)) {
-            resp.sendRedirect("sign-up");
-            resp.sendError(HttpServletResponse.SC_CONFLICT);
+        if (userOptional.isPresent()) {
+            resp.sendRedirect("/sign-in");
             throw new RuntimeException("User already exists in the database");
         }
 
+        User user = new User(login, hash.getResult());
         userDao.save(user);
 
         Session session = new Session(UUID.randomUUID(), user, LocalDateTime.now().plusHours(24));
@@ -67,10 +75,10 @@ public class SignUpServlet extends HttpServlet {
 
         Cookie cookie = new Cookie("sessionId", session.getId().toString());
         resp.addCookie(cookie);
-        resp.sendRedirect("");
+
+        resp.sendRedirect(req.getContextPath());
     }
 
-    // TODO: Code repeats in every servlet
     private IWebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
         ServletContext servletContext = this.getServletContext();
         JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(servletContext);
