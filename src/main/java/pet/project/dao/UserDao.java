@@ -4,12 +4,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import pet.project.model.User;
-import pet.project.util.EntityManagerFactoryUtil;
+import pet.project.util.PersistenceUtil;
 
 import java.util.Optional;
 
 public class UserDao {
-    private final EntityManager entityManager = EntityManagerFactoryUtil.getInstance().createEntityManager();
+    private final EntityManager entityManager = PersistenceUtil.getEntityManagerFactory().createEntityManager();
 
     public Optional<User> findByLogin(String login) {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login", User.class);

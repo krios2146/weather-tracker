@@ -5,13 +5,13 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import pet.project.model.Location;
 import pet.project.model.User;
-import pet.project.util.EntityManagerFactoryUtil;
+import pet.project.util.PersistenceUtil;
 
 import java.util.List;
 import java.util.Optional;
 
 public class LocationDao {
-    private final EntityManager entityManager = EntityManagerFactoryUtil.getInstance().createEntityManager();
+    private final EntityManager entityManager = PersistenceUtil.getEntityManagerFactory().createEntityManager();
 
     public Optional<Location> findById(Long id) {
         Location location = entityManager.find(Location.class, id);
