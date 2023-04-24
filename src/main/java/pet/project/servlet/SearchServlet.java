@@ -17,7 +17,7 @@ import pet.project.dao.SessionDao;
 import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
-import pet.project.model.api.ApiLocation;
+import pet.project.model.api.LocationApiResponse;
 import pet.project.util.TemplateEngineUtil;
 
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class SearchServlet extends HttpServlet {
 
         // TODO: try-catch looks ugly (?)
         try {
-            List<ApiLocation> foundLocations = weatherApiService.getLocationsByName(searchQuery);
+            List<LocationApiResponse> foundLocations = weatherApiService.getLocationsByName(searchQuery);
             context.setVariable("login", user.getLogin());
             context.setVariable("foundLocations", foundLocations);
             templateEngine.process("search", context, resp.getWriter());
