@@ -26,7 +26,6 @@ import java.util.UUID;
 
 @WebServlet(urlPatterns = "/sign-up")
 public class SignUpServlet extends HttpServlet {
-
     private final UserDao userDao = new UserDao();
     private final SessionDao sessionDao = new SessionDao();
     private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
