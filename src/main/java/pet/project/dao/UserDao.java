@@ -7,16 +7,10 @@ import jakarta.persistence.TypedQuery;
 import pet.project.model.User;
 import pet.project.util.EntityManagerFactoryUtil;
 
-import java.util.List;
 import java.util.Optional;
 
 public class UserDao {
     private final EntityManager entityManager = EntityManagerFactoryUtil.getInstance().createEntityManager();
-
-    public Optional<User> findById(Long id) {
-        User user = entityManager.find(User.class, id);
-        return Optional.ofNullable(user);
-    }
 
     public Optional<User> findByLogin(String login) {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login", User.class);
@@ -36,11 +30,6 @@ public class UserDao {
 
         Long result = (Long) query.getSingleResult();
         return result > 0;
-    }
-
-    public List<User> findAll() {
-        TypedQuery<User> query = entityManager.createQuery("SELECT * FROM users", User.class);
-        return query.getResultList();
     }
 
     public void save(User entity) {
@@ -64,21 +53,6 @@ public class UserDao {
             transaction.begin();
 
             entityManager.remove(entity);
-            entityManager.flush();
-
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void update(User entity) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-
-            entityManager.merge(entity);
             entityManager.flush();
 
             transaction.commit();
