@@ -10,7 +10,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherApiResponse {
     @JsonProperty("weather")
-    private List<WeatherApiModel> weather;
+    private List<WeatherApiModel> weatherList;
+
     @JsonProperty("temp")
     private Double temperature;
 
