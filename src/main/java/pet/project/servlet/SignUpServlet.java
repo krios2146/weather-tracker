@@ -2,7 +2,6 @@ package pet.project.servlet;
 
 import com.password4j.Hash;
 import com.password4j.Password;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -11,9 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.IWebContext;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.web.servlet.IServletWebExchange;
-import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import pet.project.dao.SessionDao;
 import pet.project.dao.UserDao;
 import pet.project.model.Session;
@@ -35,7 +31,7 @@ public class SignUpServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (context == null) {
-            context = buildWebContext(req, resp);
+            context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
         }
         super.service(req, resp);
     }
@@ -77,12 +73,5 @@ public class SignUpServlet extends HttpServlet {
         resp.addCookie(cookie);
 
         resp.sendRedirect(req.getContextPath());
-    }
-
-    private IWebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
-        ServletContext servletContext = this.getServletContext();
-        JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(servletContext);
-        IServletWebExchange webExchange = application.buildExchange(req, resp);
-        return new WebContext(webExchange);
     }
 }
