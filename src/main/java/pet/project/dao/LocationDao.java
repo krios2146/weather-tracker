@@ -29,7 +29,7 @@ public class LocationDao {
 
     public Optional<Location> findByCoordinates(Double latitude, Double longitude) {
         TypedQuery<Location> query = entityManager.createQuery("SELECT l FROM Location l " +
-                        "WHERE l.latitude = :latitude AND" +
+                        "WHERE l.latitude = :latitude AND " +
                         "l.longitude = :longitude",
                 Location.class);
         query.setParameter("latitude", latitude);
