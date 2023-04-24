@@ -1,7 +1,6 @@
 package pet.project.servlet;
 
 import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -10,8 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.web.servlet.IServletWebExchange;
-import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import pet.project.dao.LocationDao;
 import pet.project.dao.SessionDao;
 import pet.project.model.Location;
@@ -21,10 +18,14 @@ import pet.project.model.api.WeatherApiModel;
 import pet.project.model.dto.WeatherDto;
 import pet.project.service.CookieService;
 import pet.project.service.WeatherApiService;
-import pet.project.util.TemplateEngineUtil;
+import pet.project.util.ThymeleafUtil;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @WebServlet(urlPatterns = "")
 public class HomeServlet extends HttpServlet {
@@ -32,7 +33,7 @@ public class HomeServlet extends HttpServlet {
     private final LocationDao locationDao = new LocationDao();
     private final WeatherApiService weatherApiService = new WeatherApiService();
     private final CookieService cookieService = new CookieService();
-    private final ITemplateEngine templateEngine = TemplateEngineUtil.getInstance();
+    private final ITemplateEngine templateEngine = ThymeleafUtil.getTemplateEngine();
     private WebContext context;
 
     @Override
@@ -43,7 +44,7 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (context == null) {
-            context = buildWebContext(req, resp);
+            context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
         }
         super.service(req, resp);
     }
@@ -70,28 +71,11 @@ public class HomeServlet extends HttpServlet {
         User user = sessionOptional.get().getUser();
         List<Location> userLocations = locationDao.findByUser(user);
 
-        // TODO: `sendError` is a "terminate" method + maybe use Stream API
-        Map<Location, WeatherDto> locationWeatherMap = new HashMap<>();
-        try {
-            for (Location location : userLocations) {
-                WeatherApiModel weather = weatherApiService.getWeatherForLocation(location);
-
-                WeatherDto weatherDto = new WeatherDto(
-                        weather.getId(),
-                        weather.getCurrentState(),
-                        weather.getDescription()
-                );
-                // TODO: ???
-                Integer dtoId = weatherDto.getId();
-                String firstNumOfId = String.valueOf(dtoId.toString().charAt(0));
-                weatherDto.setId(Integer.parseInt(firstNumOfId));
-
-                locationWeatherMap.put(location, weatherDto);
-            }
-        } catch (InterruptedException e) {
-            templateEngine.process("error", context, resp.getWriter());
-            throw new RuntimeException("Issues with weather API call", e.getCause());
-        }
+        Map<Location, WeatherDto> locationWeatherMap = userLocations.stream()
+                .collect(Collectors.toMap(
+                        location -> location,
+                        this::getWeather
+                ));
 
         context.setVariable("locationWeatherMap", locationWeatherMap);
         context.setVariable("login", user.getLogin());
@@ -117,19 +101,50 @@ public class HomeServlet extends HttpServlet {
 
         User user = sessionOptional.get().getUser();
 
-        Long locationId = Long.parseLong(req.getParameter("locationId"));
-        Location location = locationDao.findById(locationId).orElseThrow();
-        List<User> userList = location.getUsers();
-        userList.remove(user);
-        location.setUsers(userList);
+        String locationParam = req.getParameter("locationId");
+
+        if (locationParam == null || locationParam.isBlank()) {
+            throw new RuntimeException("Id of a location to delete is empty");
+        }
+
+        Long locationId = Long.parseLong(locationParam);
+
+        Optional<Location> locationOptional = locationDao.findById(locationId);
+
+        if (locationOptional.isEmpty()) {
+            throw new RuntimeException("Location with given id is not found in the database");
+        }
+
+        Location location = locationOptional.get();
+
+        List<User> users = location.getUsers();
+        users.remove(user);
+        location.setUsers(users);
         locationDao.update(location);
+
         resp.sendRedirect(req.getContextPath());
     }
+    
+    private WeatherDto getWeather(Location location) {
+        try {
+            WeatherApiModel weather = weatherApiService.getWeatherForLocation(location);
+            return buildWeatherDto(weather);
+        } catch (Exception e) {
+            throw new RuntimeException("Issues with weather API call", e);
+        }
+    }
 
-    private WebContext buildWebContext(HttpServletRequest req, HttpServletResponse resp) {
-        ServletContext servletContext = this.getServletContext();
-        JakartaServletWebApplication application = JakartaServletWebApplication.buildApplication(servletContext);
-        IServletWebExchange webExchange = application.buildExchange(req, resp);
-        return new WebContext(webExchange);
+    private static WeatherDto buildWeatherDto(WeatherApiModel weather) {
+        return new WeatherDto(
+                getFirstNumber(weather.getId()),
+                weather.getCurrentState(),
+                weather.getDescription()
+        );
+    }
+
+    private static Integer getFirstNumber(Integer number) {
+        char firstNumberChar = number.toString().charAt(0);
+        String firstNumberString = String.valueOf(firstNumberChar);
+        return Integer.parseInt(firstNumberString);
     }
 }

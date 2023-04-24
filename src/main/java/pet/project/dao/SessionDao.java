@@ -4,14 +4,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import pet.project.model.Session;
-import pet.project.util.EntityManagerFactoryUtil;
+import pet.project.util.PersistenceUtil;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class SessionDao {
-    private final EntityManager entityManager = EntityManagerFactoryUtil.getInstance().createEntityManager();
+    private final EntityManager entityManager = PersistenceUtil.getEntityManagerFactory().createEntityManager();
 
     public Optional<Session> findById(UUID id) {
         Session session = entityManager.find(Session.class, id);

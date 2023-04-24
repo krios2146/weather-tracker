@@ -2,41 +2,20 @@ package pet.project.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import pet.project.model.Location;
 import pet.project.model.User;
-import pet.project.util.EntityManagerFactoryUtil;
+import pet.project.util.PersistenceUtil;
 
 import java.util.List;
 import java.util.Optional;
 
 public class LocationDao {
-    private final EntityManager entityManager = EntityManagerFactoryUtil.getInstance().createEntityManager();
+    private final EntityManager entityManager = PersistenceUtil.getEntityManagerFactory().createEntityManager();
 
     public Optional<Location> findById(Long id) {
         Location location = entityManager.find(Location.class, id);
         return Optional.ofNullable(location);
-    }
-
-    public List<Location> findAll() {
-        TypedQuery<Location> query = entityManager.createQuery("SELECT * FROM locations", Location.class);
-        return query.getResultList();
-    }
-
-    public boolean isPresent(Location location) {
-        Query query = entityManager.createQuery("SELECT COUNT(*) FROM Location l " +
-                "WHERE l.name = :name AND " +
-                "l.longitude = :longitude AND " +
-                "l.latitude = :latitude"
-        );
-
-        query.setParameter("name", location.getName());
-        query.setParameter("longitude", location.getLongitude());
-        query.setParameter("latitude", location.getLatitude());
-
-        Long result = (Long) query.getSingleResult();
-        return result > 0;
     }
 
     public List<Location> findByUser(User user) {
@@ -48,12 +27,15 @@ public class LocationDao {
         return query.getResultList();
     }
 
-    public List<Location> findByName(String name) {
-        TypedQuery<Location> query = entityManager.createQuery("SELECT * FROM Location l " +
-                        "WHERE l.name = :name",
+    public Optional<Location> findByCoordinates(Double latitude, Double longitude) {
+        TypedQuery<Location> query = entityManager.createQuery("SELECT l FROM Location l " +
+                        "WHERE l.latitude = :latitude AND " +
+                        "l.longitude = :longitude",
                 Location.class);
-        query.setParameter("name", name);
-        return query.getResultList();
+        query.setParameter("latitude", latitude);
+        query.setParameter("longitude", longitude);
+        Location location = query.getSingleResult();
+        return Optional.ofNullable(location);
     }
 
     public void save(Location entity) {
