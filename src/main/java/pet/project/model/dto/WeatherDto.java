@@ -1,4 +1,4 @@
-package pet.project.dto;
+package pet.project.model.dto;
 
 public class WeatherDto {
     private Integer id;
