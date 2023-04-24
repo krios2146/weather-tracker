@@ -48,12 +48,15 @@ public class LocationDao {
         return query.getResultList();
     }
 
-    public List<Location> findByName(String name) {
-        TypedQuery<Location> query = entityManager.createQuery("SELECT * FROM Location l " +
-                        "WHERE l.name = :name",
+    public Optional<Location> findByCoordinates(Double latitude, Double longitude) {
+        TypedQuery<Location> query = entityManager.createQuery("SELECT l FROM Location l " +
+                        "WHERE l.latitude = :latitude AND" +
+                        "l.longitude = :longitude",
                 Location.class);
-        query.setParameter("name", name);
-        return query.getResultList();
+        query.setParameter("latitude", latitude);
+        query.setParameter("longitude", longitude);
+        Location location = query.getSingleResult();
+        return Optional.ofNullable(location);
     }
 
     public void save(Location entity) {
