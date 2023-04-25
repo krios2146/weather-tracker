@@ -46,7 +46,7 @@ public class WeatherApiResponse {
     @JsonProperty("dt")
     @JsonDeserialize(using = UnixTimestampDeserializer.class)
     private String date;
-    
+
     @JsonProperty("sunrise")
     @JsonDeserialize(using = UnixTimestampDeserializer.class)
     private String sunriseTime;
@@ -56,7 +56,7 @@ public class WeatherApiResponse {
     private String sunsetTime;
 
     @Getter
-    private static class Wind {
+    public static class Wind {
         @JsonProperty("speed")
         private Double speed;
 
@@ -68,7 +68,7 @@ public class WeatherApiResponse {
     }
 
     @Getter
-    private static class Clouds {
+    public static class Clouds {
         @JsonProperty("all")
         private Integer cloudiness;
     }
