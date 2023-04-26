@@ -2,6 +2,7 @@ package pet.project.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import pet.project.model.Location;
 import pet.project.model.User;
@@ -34,8 +35,15 @@ public class LocationDao {
                 Location.class);
         query.setParameter("latitude", latitude);
         query.setParameter("longitude", longitude);
-        Location location = query.getSingleResult();
-        return Optional.ofNullable(location);
+
+        // Catching RuntimeException is not good
+        try {
+            Location location = query.getSingleResult();
+            return Optional.of(location);
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     public void save(Location entity) {
