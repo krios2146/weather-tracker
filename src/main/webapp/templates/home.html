@@ -74,8 +74,8 @@
                                         </li>
                                         <li class="list-group-item">
                                             <i class="fas fa-wind" style="margin-right: 5px;width: 20px;"></i>
-                                            <span
-                                                th:text="|${item.value.windDirection}° ${item.value.windSpeed} km/h (Gust ${item.value.windGust} km/h)|">
+                                            <span th:text="|${item.value.windDirection}° ${item.value.windSpeed} km/h|"></span>
+                                            <span th:if="${item.value.windGust}" th:text="|(Gust ${item.value.windGust} km/h)|"></span>
                                         </li>
                                         <li class="list-group-item">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
