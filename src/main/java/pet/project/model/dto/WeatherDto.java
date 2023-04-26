@@ -1,6 +1,8 @@
 package pet.project.model.dto;
 
 import lombok.*;
+import pet.project.model.dto.enums.TimeOfDay;
+import pet.project.model.dto.enums.WeatherCondition;
 
 @Getter
 @Setter
@@ -8,9 +10,9 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class WeatherDto {
-    private Integer id;
+    private WeatherCondition weatherCondition;
 
-    private String currentState;
+    private TimeOfDay timeOfDay;
 
     private String description;
 
