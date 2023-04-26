@@ -16,6 +16,8 @@ import pet.project.model.Session;
 import pet.project.model.User;
 import pet.project.model.api.WeatherApiResponse;
 import pet.project.model.dto.WeatherDto;
+import pet.project.model.dto.enums.TimeOfDay;
+import pet.project.model.dto.enums.WeatherCondition;
 import pet.project.service.CookieService;
 import pet.project.service.WeatherApiService;
 import pet.project.util.ThymeleafUtil;
@@ -137,8 +139,8 @@ public class HomeServlet extends HttpServlet {
     private static WeatherDto buildWeatherDto(WeatherApiResponse weather) {
         WeatherApiResponse.Weather weatherApiModel = weather.getWeatherList().get(0);
         return WeatherDto.builder()
-                .id(getFirstNumber(weatherApiModel.getId()))
-                .currentState(weatherApiModel.getCurrentState())
+                .weatherCondition(WeatherCondition.getWeatherConditionForCode(weatherApiModel.getId()))
+                .timeOfDay(TimeOfDay.getTimeOfDayForTime(weather.getDate()))
                 .description(weatherApiModel.getDescription())
                 .temperature(weather.getMain().getTemperature())
                 .temperatureFeelsLike(weather.getMain().getTemperatureFeelsLike())
