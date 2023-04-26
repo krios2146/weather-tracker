@@ -19,23 +19,8 @@ public class WeatherApiResponse {
     @JsonProperty("weather")
     private List<Weather> weatherList;
 
-    @JsonProperty("temp")
-    private Double temperature;
-
-    @JsonProperty("feels_like")
-    private Double temperatureFeelsLike;
-
-    @JsonProperty("temp_min")
-    private Double temperatureMinimal;
-
-    @JsonProperty("temp_max")
-    private Double temperatureMaximum;
-
-    @JsonProperty("pressure")
-    private Integer pressure;
-
-    @JsonProperty("humidity")
-    private Integer humidity;
+    @JsonProperty("main")
+    private Main main;
 
     @JsonProperty("wind")
     private Wind wind;
@@ -44,18 +29,14 @@ public class WeatherApiResponse {
     private Clouds clouds;
 
     @JsonProperty("dt")
-    @JsonDeserialize(using = UnixTimestampDeserializer.class)
+    @JsonDeserialize(using = UnixDateTimestampDeserializer.class)
     private String date;
 
-    @JsonProperty("sunrise")
-    @JsonDeserialize(using = UnixTimestampDeserializer.class)
-    private String sunriseTime;
-
-    @JsonProperty("sunset")
-    @JsonDeserialize(using = UnixTimestampDeserializer.class)
-    private String sunsetTime;
+    @JsonProperty("sys")
+    private Sys sys;
 
     @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Weather {
         @JsonProperty("id")
         private Integer id;
@@ -65,6 +46,28 @@ public class WeatherApiResponse {
 
         @JsonProperty("description")
         private String description;
+    }
+
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Main {
+        @JsonProperty("temp")
+        private Double temperature;
+
+        @JsonProperty("feels_like")
+        private Double temperatureFeelsLike;
+
+        @JsonProperty("pressure")
+        private Integer pressure;
+
+        @JsonProperty("humidity")
+        private Integer humidity;
+
+        @JsonProperty("temp_min")
+        private Double temperatureMinimal;
+
+        @JsonProperty("temp_max")
+        private Double temperatureMaximum;
     }
 
     @Getter
@@ -85,12 +88,34 @@ public class WeatherApiResponse {
         private Integer cloudiness;
     }
 
-    private static class UnixTimestampDeserializer extends JsonDeserializer<String> {
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Sys {
+        @JsonProperty("sunrise")
+        @JsonDeserialize(using = UnixTimeTimestampDeserializer.class)
+        private String sunriseTime;
+
+        @JsonProperty("sunset")
+        @JsonDeserialize(using = UnixTimeTimestampDeserializer.class)
+        private String sunsetTime;
+    }
+
+    private static class UnixDateTimestampDeserializer extends JsonDeserializer<String> {
         @Override
         public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
             long timestamp = jsonParser.getValueAsLong();
             Date date = new Date(timestamp * 1000);
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM HH:mm");
+            return formatter.format(date);
+        }
+    }
+
+    private static class UnixTimeTimestampDeserializer extends JsonDeserializer<String> {
+        @Override
+        public String deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+            long timestamp = jsonParser.getValueAsLong();
+            Date date = new Date(timestamp * 1000);
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
             return formatter.format(date);
         }
     }
