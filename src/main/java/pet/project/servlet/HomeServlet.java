@@ -14,7 +14,6 @@ import pet.project.dao.SessionDao;
 import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
-import pet.project.model.api.WeatherApiModel;
 import pet.project.model.api.WeatherApiResponse;
 import pet.project.model.dto.WeatherDto;
 import pet.project.service.CookieService;
@@ -136,7 +135,7 @@ public class HomeServlet extends HttpServlet {
     }
 
     private static WeatherDto buildWeatherDto(WeatherApiResponse weather) {
-        WeatherApiModel weatherApiModel = weather.getWeatherList().get(0);
+        WeatherApiResponse.Weather weatherApiModel = weather.getWeatherList().get(0);
         return WeatherDto.builder()
                 .id(getFirstNumber(weatherApiModel.getId()))
                 .currentState(weatherApiModel.getCurrentState())

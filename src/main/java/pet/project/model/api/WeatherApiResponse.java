@@ -17,7 +17,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherApiResponse {
     @JsonProperty("weather")
-    private List<WeatherApiModel> weatherList;
+    private List<Weather> weatherList;
 
     @JsonProperty("temp")
     private Double temperature;
@@ -54,6 +54,18 @@ public class WeatherApiResponse {
     @JsonProperty("sunset")
     @JsonDeserialize(using = UnixTimestampDeserializer.class)
     private String sunsetTime;
+
+    @Getter
+    public static class Weather {
+        @JsonProperty("id")
+        private Integer id;
+
+        @JsonProperty("main")
+        private String currentState;
+
+        @JsonProperty("description")
+        private String description;
+    }
 
     @Getter
     public static class Wind {
