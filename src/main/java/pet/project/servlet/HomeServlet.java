@@ -14,8 +14,10 @@ import pet.project.dao.SessionDao;
 import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
-import pet.project.model.api.WeatherApiModel;
+import pet.project.model.api.WeatherApiResponse;
 import pet.project.model.dto.WeatherDto;
+import pet.project.model.dto.enums.TimeOfDay;
+import pet.project.model.dto.enums.WeatherCondition;
 import pet.project.service.CookieService;
 import pet.project.service.WeatherApiService;
 import pet.project.util.ThymeleafUtil;
@@ -124,22 +126,36 @@ public class HomeServlet extends HttpServlet {
 
         resp.sendRedirect(req.getContextPath());
     }
-    
+
     private WeatherDto getWeather(Location location) {
         try {
-            WeatherApiModel weather = weatherApiService.getWeatherForLocation(location);
+            WeatherApiResponse weather = weatherApiService.getWeatherForLocation(location);
             return buildWeatherDto(weather);
         } catch (Exception e) {
             throw new RuntimeException("Issues with weather API call", e);
         }
     }
 
-    private static WeatherDto buildWeatherDto(WeatherApiModel weather) {
-        return new WeatherDto(
-                getFirstNumber(weather.getId()),
-                weather.getCurrentState(),
-                weather.getDescription()
-        );
+    private static WeatherDto buildWeatherDto(WeatherApiResponse weather) {
+        WeatherApiResponse.Weather weatherApiModel = weather.getWeatherList().get(0);
+        return WeatherDto.builder()
+                .weatherCondition(WeatherCondition.getWeatherConditionForCode(weatherApiModel.getId()))
+                .timeOfDay(TimeOfDay.getTimeOfDayForTime(weather.getDate()))
+                .description(weatherApiModel.getDescription())
+                .temperature(weather.getMain().getTemperature())
+                .temperatureFeelsLike(weather.getMain().getTemperatureFeelsLike())
+                .temperatureMinimum(weather.getMain().getTemperatureMinimal())
+                .temperatureMaximum(weather.getMain().getTemperatureMaximum())
+                .humidity(weather.getMain().getHumidity())
+                .pressure(weather.getMain().getPressure())
+                .windSpeed(weather.getWind().getSpeed())
+                .windDirection(weather.getWind().getDeg())
+                .windGust(weather.getWind().getGust())
+                .cloudiness(weather.getClouds().getCloudiness())
+                .date(weather.getDate())
+                .sunrise(weather.getSys().getSunriseTime())
+                .sunset(weather.getSys().getSunsetTime())
+                .build();
     }
 
     private static Integer getFirstNumber(Integer number) {

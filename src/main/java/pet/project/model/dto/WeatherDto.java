@@ -1,37 +1,44 @@
 package pet.project.model.dto;
 
+import lombok.*;
+import pet.project.model.dto.enums.TimeOfDay;
+import pet.project.model.dto.enums.WeatherCondition;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class WeatherDto {
-    private Integer id;
-    private String currentState;
+    private WeatherCondition weatherCondition;
+
+    private TimeOfDay timeOfDay;
+
     private String description;
 
-    public WeatherDto(Integer id, String currentState, String description) {
-        this.id = id;
-        this.currentState = currentState;
-        this.description = description;
-    }
+    private Double temperature;
 
-    public Integer getId() {
-        return id;
-    }
+    private Double temperatureFeelsLike;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    private Double temperatureMinimum;
 
-    public String getCurrentState() {
-        return currentState;
-    }
+    private Double temperatureMaximum;
 
-    public void setCurrentState(String currentState) {
-        this.currentState = currentState;
-    }
+    private Integer humidity;
 
-    public String getDescription() {
-        return description;
-    }
+    private Integer pressure;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    private Double windSpeed;
+
+    private Integer windDirection;
+
+    private Double windGust;
+
+    private Integer cloudiness;
+
+    private String date;
+
+    private String sunrise;
+
+    private String sunset;
 }

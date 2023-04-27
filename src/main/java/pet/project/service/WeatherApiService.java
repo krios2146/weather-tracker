@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pet.project.model.Location;
 import pet.project.model.api.LocationApiResponse;
-import pet.project.model.api.WeatherApiModel;
 import pet.project.model.api.WeatherApiResponse;
 
 import java.io.IOException;
@@ -21,22 +20,14 @@ public class WeatherApiService {
     private static final String GEOCODING_API_URL_SUFFIX = "/geo/1.0/direct";
 
     private final HttpClient client = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public WeatherApiModel getWeatherForLocation(Location location) throws IOException, InterruptedException {
+    public WeatherApiResponse getWeatherForLocation(Location location) throws IOException, InterruptedException {
         URI uri = buildUriForWeatherRequest(location);
         HttpRequest request = buildRequest(uri);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        WeatherApiResponse weatherApiResponse = objectMapper.readValue(response.body(), WeatherApiResponse.class);
-
-        List<WeatherApiModel> weatherList = weatherApiResponse.getWeatherList();
-
-        if (weatherList.size() < 1) {
-            throw new RuntimeException("There is no weather found for given location");
-        }
-
-        return weatherList.get(0);
+        return objectMapper.readValue(response.body(), WeatherApiResponse.class);
     }
 
     public List<LocationApiResponse> getLocationsByName(String nameOfLocation) throws IOException, InterruptedException {
@@ -44,7 +35,6 @@ public class WeatherApiService {
         HttpRequest request = buildRequest(uri);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(
                 response.body(),
                 new TypeReference<List<LocationApiResponse>>() {
