@@ -14,7 +14,7 @@ public enum TimeOfDay {
     UNDEFINED;
 
     public static TimeOfDay getTimeOfDayForTime(String time) {
-        SimpleDateFormat formatter = new SimpleDateFormat();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM HH:mm");
         Calendar calendar = new GregorianCalendar();
 
         try {
