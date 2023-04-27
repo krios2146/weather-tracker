@@ -20,13 +20,12 @@ public class WeatherApiService {
     private static final String GEOCODING_API_URL_SUFFIX = "/geo/1.0/direct";
 
     private final HttpClient client = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public WeatherApiResponse getWeatherForLocation(Location location) throws IOException, InterruptedException {
         URI uri = buildUriForWeatherRequest(location);
         HttpRequest request = buildRequest(uri);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        ObjectMapper objectMapper = new ObjectMapper();
 
         return objectMapper.readValue(response.body(), WeatherApiResponse.class);
     }
@@ -36,7 +35,6 @@ public class WeatherApiService {
         HttpRequest request = buildRequest(uri);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(
                 response.body(),
                 new TypeReference<List<LocationApiResponse>>() {
