@@ -1,9 +1,9 @@
 FROM maven:latest AS build
-COPY . /app
 WORKDIR /app
+COPY . .
 RUN mvn package
 
-FROM tomcat:latest
-COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/
+FROM tomcat
+COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/weather-tracker.war
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
