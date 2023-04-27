@@ -8,7 +8,7 @@ public enum WeatherCondition {
     ATMOSPHERE,
     CLEAR,
     CLOUDS,
-    NOT_DEFINED;
+    UNDEFINED;
 
     public static WeatherCondition getWeatherConditionForCode(Integer code) {
         String codeStr = String.valueOf(code);
@@ -34,6 +34,6 @@ public enum WeatherCondition {
         if (codeStr.startsWith("8")) {
             return CLOUDS;
         }
-        return NOT_DEFINED;
+        return UNDEFINED;
     }
 }
