@@ -157,10 +157,4 @@ public class HomeServlet extends HttpServlet {
                 .sunset(weather.getSys().getSunsetTime())
                 .build();
     }
-
-    private static Integer getFirstNumber(Integer number) {
-        char firstNumberChar = number.toString().charAt(0);
-        String firstNumberString = String.valueOf(firstNumberChar);
-        return Integer.parseInt(firstNumberString);
-    }
 }
