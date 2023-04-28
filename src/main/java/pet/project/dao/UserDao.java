@@ -2,6 +2,7 @@ package pet.project.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import pet.project.model.User;
 import pet.project.util.PersistenceUtil;
@@ -14,8 +15,15 @@ public class UserDao {
     public Optional<User> findByLogin(String login) {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.login = :login", User.class);
         query.setParameter("login", login);
-        User user = query.getSingleResult();
-        return Optional.ofNullable(user);
+
+        // Catching RuntimeException is not good
+        try {
+            User user = query.getSingleResult();
+            return Optional.of(user);
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     public void save(User entity) {
