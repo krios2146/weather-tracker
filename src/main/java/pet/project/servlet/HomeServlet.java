@@ -66,7 +66,7 @@ public class HomeServlet extends HttpServlet {
         Optional<Session> sessionOptional = sessionDao.findById(sessionId);
 
         if (sessionOptional.isEmpty()) {
-            resp.sendRedirect("/sign-in");
+            resp.sendRedirect(req.getContextPath() + "/sign-in");
             return;
         }
 
@@ -97,7 +97,7 @@ public class HomeServlet extends HttpServlet {
         Optional<Session> sessionOptional = sessionDao.findById(sessionId);
 
         if (sessionOptional.isEmpty()) {
-            resp.sendRedirect("/sign-in");
+            resp.sendRedirect(req.getContextPath() + "/sign-in");
             return;
         }
 

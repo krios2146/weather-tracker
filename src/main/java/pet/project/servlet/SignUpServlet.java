@@ -59,7 +59,7 @@ public class SignUpServlet extends HttpServlet {
         Optional<User> userOptional = userDao.findByLogin(login);
 
         if (userOptional.isPresent()) {
-            resp.sendRedirect("/sign-in");
+            resp.sendRedirect(req.getContextPath() + "/sign-in");
             throw new RuntimeException("User already exists in the database");
         }
 
