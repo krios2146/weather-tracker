@@ -10,7 +10,7 @@ import java.io.IOException;
 public class WeatherTrackerFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         ThymeleafUtil.buildTemplateEngine(filterConfig.getServletContext());
     }
 

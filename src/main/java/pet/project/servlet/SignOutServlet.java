@@ -1,6 +1,5 @@
 package pet.project.servlet;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
@@ -20,7 +19,7 @@ public class SignOutServlet extends HttpServlet {
     private final CookieService cookieService = new CookieService();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Cookie[] cookies = req.getCookies();
         Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
 
