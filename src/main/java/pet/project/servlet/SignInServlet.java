@@ -53,15 +53,17 @@ public class SignInServlet extends HttpServlet {
 
         if (optionalUser.isEmpty()) {
             log.warn("Authentication failed: no user with given login found");
-            throw new RuntimeException("Authentication failed: no user with given login found");
+            templateEngine.process("error", context);
+            return;
         }
         User user = optionalUser.get();
 
         String passwordFromDb = user.getPassword();
 
         if (!Password.check(password, passwordFromDb).withBcrypt()) {
-            log.warn("Authentication failed: wrong password");
-            throw new RuntimeException("Authentication failed: wrong password");
+            log.warn("Authentication failed: given password is wrong");
+            templateEngine.process("error", context);
+            return;
         }
 
         log.info("Creating new session");

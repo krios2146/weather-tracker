@@ -51,13 +51,15 @@ public class SignUpServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         if (login == null || login.isBlank()) {
-            log.warn("Login parameter is invalid");
-            throw new RuntimeException("Login is invalid");
+            log.warn("Login parameter is invalid: processing error page");
+            templateEngine.process("error", context);
+            return;
         }
 
         if (password == null || password.isBlank()) {
-            log.warn("Password parameter is invalid");
-            throw new RuntimeException("Password is invalid");
+            log.warn("Password parameter is invalid: processing error page");
+            templateEngine.process("error", context);
+            return;
         }
 
         Hash hash = Password.hash(password).withBcrypt();
@@ -67,7 +69,6 @@ public class SignUpServlet extends HttpServlet {
         if (userOptional.isPresent()) {
             log.warn("User already exists in the database: redirect to the sign-in page");
             resp.sendRedirect(req.getContextPath() + "/sign-in");
-            throw new RuntimeException("User already exists in the database");
         }
 
         log.info("Saving new user to the database");

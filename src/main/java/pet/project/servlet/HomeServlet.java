@@ -24,11 +24,7 @@ import pet.project.service.WeatherApiService;
 import pet.project.util.ThymeleafUtil;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @WebServlet(urlPatterns = "")
 @Slf4j
@@ -82,11 +78,18 @@ public class HomeServlet extends HttpServlet {
         List<Location> userLocations = locationDao.findByUser(user);
 
         log.info("Finding current weather for user locations");
-        Map<Location, WeatherDto> locationWeatherMap = userLocations.stream()
-                .collect(Collectors.toMap(
-                        location -> location,
-                        this::getWeather
-                ));
+        Map<Location, WeatherDto> locationWeatherMap = new HashMap<>();
+        try {
+            for (Location location : userLocations) {
+                WeatherApiResponse weather = weatherApiService.getWeatherForLocation(location);
+                WeatherDto weatherDto = buildWeatherDto(weather);
+                locationWeatherMap.put(location, weatherDto);
+            }
+        } catch (Exception e) {
+            log.warn("Issues with weather API call");
+            templateEngine.process("error", context);
+            return;
+        }
 
         context.setVariable("locationWeatherMap", locationWeatherMap);
         context.setVariable("login", user.getLogin());
@@ -102,8 +105,9 @@ public class HomeServlet extends HttpServlet {
         Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
 
         if (cookieOptional.isEmpty()) {
-            log.warn("Cookie is not found");
-            throw new RuntimeException("Cookie is not found");
+            log.warn("Cookie is not found: processing error page");
+            templateEngine.process("error", context);
+            return;
         }
 
         log.info("Finding session from cookie");
@@ -121,8 +125,9 @@ public class HomeServlet extends HttpServlet {
         String locationParam = req.getParameter("locationId");
 
         if (locationParam == null || locationParam.isBlank()) {
-            log.warn("Id of a location to delete is empty");
-            throw new RuntimeException("Id of a location to delete is empty");
+            log.warn("Id of a location to delete is not present: processing error page");
+            templateEngine.process("error", context);
+            return;
         }
 
         Long locationId = Long.parseLong(locationParam);
@@ -131,8 +136,9 @@ public class HomeServlet extends HttpServlet {
         Optional<Location> locationOptional = locationDao.findById(locationId);
 
         if (locationOptional.isEmpty()) {
-            log.warn("Location with given id is not found in the database");
-            throw new RuntimeException("Location with given id is not found in the database");
+            log.warn("Location with given id is not found in the database: processing error page");
+            templateEngine.process("error", context);
+            return;
         }
 
         Location location = locationOptional.get();
@@ -145,17 +151,6 @@ public class HomeServlet extends HttpServlet {
 
         log.info("Deleting is successful: refreshing home page");
         resp.sendRedirect(req.getContextPath());
-    }
-
-    private WeatherDto getWeather(Location location) {
-        try {
-            log.info("Calling openweather API for a weather for the specific location");
-            WeatherApiResponse weather = weatherApiService.getWeatherForLocation(location);
-            return buildWeatherDto(weather);
-        } catch (Exception e) {
-            log.warn("Issues with weather API call");
-            throw new RuntimeException("Issues with weather API call", e);
-        }
     }
 
     private static WeatherDto buildWeatherDto(WeatherApiResponse weather) {
