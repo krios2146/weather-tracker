@@ -37,12 +37,12 @@ public class SignUpServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         templateEngine.process("sign-up", context, resp.getWriter());
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
 
@@ -59,7 +59,7 @@ public class SignUpServlet extends HttpServlet {
         Optional<User> userOptional = userDao.findByLogin(login);
 
         if (userOptional.isPresent()) {
-            resp.sendRedirect("/sign-in");
+            resp.sendRedirect(req.getContextPath() + "/sign-in");
             throw new RuntimeException("User already exists in the database");
         }
 

@@ -36,12 +36,12 @@ public class SignInServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         templateEngine.process("sign-in", context, resp.getWriter());
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
 
@@ -50,7 +50,7 @@ public class SignInServlet extends HttpServlet {
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("Authentication failed: no user with given login found");
         }
-        User user = optionalUser.orElseThrow();
+        User user = optionalUser.get();
 
         String passwordFromDb = user.getPassword();
 

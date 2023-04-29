@@ -66,7 +66,7 @@ public class HomeServlet extends HttpServlet {
         Optional<Session> sessionOptional = sessionDao.findById(sessionId);
 
         if (sessionOptional.isEmpty()) {
-            resp.sendRedirect("/sign-in");
+            resp.sendRedirect(req.getContextPath() + "/sign-in");
             return;
         }
 
@@ -97,7 +97,7 @@ public class HomeServlet extends HttpServlet {
         Optional<Session> sessionOptional = sessionDao.findById(sessionId);
 
         if (sessionOptional.isEmpty()) {
-            resp.sendRedirect("/sign-in");
+            resp.sendRedirect(req.getContextPath() + "/sign-in");
             return;
         }
 
@@ -156,11 +156,5 @@ public class HomeServlet extends HttpServlet {
                 .sunrise(weather.getSys().getSunriseTime())
                 .sunset(weather.getSys().getSunsetTime())
                 .build();
-    }
-
-    private static Integer getFirstNumber(Integer number) {
-        char firstNumberChar = number.toString().charAt(0);
-        String firstNumberString = String.valueOf(firstNumberChar);
-        return Integer.parseInt(firstNumberString);
     }
 }
