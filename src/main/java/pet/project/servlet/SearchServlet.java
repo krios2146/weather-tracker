@@ -71,8 +71,9 @@ public class SearchServlet extends HttpServlet {
         String searchQuery = req.getParameter("q");
 
         if (searchQuery == null || searchQuery.isBlank()) {
-            log.warn("Search query is invalid");
-            throw new RuntimeException("Search query is invalid");
+            log.warn("Search query is invalid: processing error page");
+            templateEngine.process("error", context);
+            return;
         }
 
         try {
@@ -88,7 +89,6 @@ public class SearchServlet extends HttpServlet {
         } catch (InterruptedException e) {
             log.warn("Issues with geocoding api call");
             templateEngine.process("error", context, resp.getWriter());
-            throw new RuntimeException("Issues with geocoding api call");
         }
     }
 
@@ -120,19 +120,22 @@ public class SearchServlet extends HttpServlet {
         String name = req.getParameter("name");
         if (name == null || name.isBlank()) {
             log.warn("Parameter name is invalid");
-            throw new RuntimeException("Parameter name is invalid");
+            templateEngine.process("error", context);
+            return;
         }
 
         String latitudeParam = req.getParameter("latitude");
         if (latitudeParam == null || latitudeParam.isBlank()) {
             log.warn("Parameter latitude is invalid");
-            throw new RuntimeException("Parameter latitude is invalid");
+            templateEngine.process("error", context);
+            return;
         }
 
         String longitudeParam = req.getParameter("longitude");
         if (longitudeParam == null || longitudeParam.isBlank()) {
             log.warn("Parameter longitude is invalid");
-            throw new RuntimeException("Parameter longitude is invalid");
+            templateEngine.process("error", context);
+            return;
         }
 
         Double latitude = Double.valueOf(latitudeParam);
