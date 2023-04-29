@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.IWebContext;
 import pet.project.dao.SessionDao;
@@ -22,6 +23,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @WebServlet(urlPatterns = "/sign-up")
+@Slf4j
 public class SignUpServlet extends HttpServlet {
     private final UserDao userDao = new UserDao();
     private final SessionDao sessionDao = new SessionDao();
@@ -31,6 +33,7 @@ public class SignUpServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (context == null) {
+            log.info("Context is null: building");
             context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
         }
         super.service(req, resp);
@@ -38,6 +41,7 @@ public class SignUpServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        log.info("Processing sign-up page");
         templateEngine.process("sign-up", context, resp.getWriter());
     }
 
@@ -47,10 +51,12 @@ public class SignUpServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         if (login == null || login.isBlank()) {
+            log.warn("Login parameter is invalid");
             throw new RuntimeException("Login is invalid");
         }
 
         if (password == null || password.isBlank()) {
+            log.warn("Password parameter is invalid");
             throw new RuntimeException("Password is invalid");
         }
 
@@ -59,19 +65,24 @@ public class SignUpServlet extends HttpServlet {
         Optional<User> userOptional = userDao.findByLogin(login);
 
         if (userOptional.isPresent()) {
+            log.warn("User already exists in the database: redirect to the sign-in page");
             resp.sendRedirect(req.getContextPath() + "/sign-in");
             throw new RuntimeException("User already exists in the database");
         }
 
+        log.info("Saving new user to the database");
         User user = new User(login, hash.getResult());
         userDao.save(user);
 
+        log.info("Creating new session");
         Session session = new Session(UUID.randomUUID(), user, LocalDateTime.now().plusHours(24));
         sessionDao.save(session);
 
+        log.info("Adding cookie with session to the response");
         Cookie cookie = new Cookie("sessionId", session.getId().toString());
         resp.addCookie(cookie);
 
+        log.info("Registration is successful: redirecting to the home page");
         resp.sendRedirect(req.getContextPath());
     }
 }
