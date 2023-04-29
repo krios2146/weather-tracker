@@ -102,8 +102,9 @@ public class HomeServlet extends HttpServlet {
         Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
 
         if (cookieOptional.isEmpty()) {
-            log.warn("Cookie is not found");
-            throw new RuntimeException("Cookie is not found");
+            log.warn("Cookie is not found: processing error page");
+            templateEngine.process("error", context);
+            return;
         }
 
         log.info("Finding session from cookie");
@@ -121,8 +122,9 @@ public class HomeServlet extends HttpServlet {
         String locationParam = req.getParameter("locationId");
 
         if (locationParam == null || locationParam.isBlank()) {
-            log.warn("Id of a location to delete is empty");
-            throw new RuntimeException("Id of a location to delete is empty");
+            log.warn("Id of a location to delete is not present: processing error page");
+            templateEngine.process("error", context);
+            return;
         }
 
         Long locationId = Long.parseLong(locationParam);
@@ -131,8 +133,9 @@ public class HomeServlet extends HttpServlet {
         Optional<Location> locationOptional = locationDao.findById(locationId);
 
         if (locationOptional.isEmpty()) {
-            log.warn("Location with given id is not found in the database");
-            throw new RuntimeException("Location with given id is not found in the database");
+            log.warn("Location with given id is not found in the database: processing error page");
+            templateEngine.process("error", context);
+            return;
         }
 
         Location location = locationOptional.get();
