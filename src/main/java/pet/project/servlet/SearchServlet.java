@@ -15,7 +15,6 @@ import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
 import pet.project.model.api.LocationApiResponse;
-import pet.project.service.CookieService;
 import pet.project.service.WeatherApiService;
 import pet.project.util.ThymeleafUtil;
 

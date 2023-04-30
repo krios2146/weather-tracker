@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import pet.project.dao.SessionDao;
 import pet.project.model.Session;
-import pet.project.service.CookieService;
 
 import java.io.IOException;
 import java.util.Optional;

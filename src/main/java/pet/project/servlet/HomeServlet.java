@@ -19,7 +19,6 @@ import pet.project.model.api.WeatherApiResponse;
 import pet.project.model.dto.WeatherDto;
 import pet.project.model.dto.enums.TimeOfDay;
 import pet.project.model.dto.enums.WeatherCondition;
-import pet.project.service.CookieService;
 import pet.project.service.WeatherApiService;
 import pet.project.util.ThymeleafUtil;
 
