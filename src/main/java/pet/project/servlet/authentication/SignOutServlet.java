@@ -1,4 +1,4 @@
-package pet.project.servlet;
+package pet.project.servlet.authentication;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import pet.project.dao.SessionDao;
 import pet.project.model.Session;
+import pet.project.servlet.WeatherTrackerBaseServlet;
 
 import java.io.IOException;
 import java.util.Optional;

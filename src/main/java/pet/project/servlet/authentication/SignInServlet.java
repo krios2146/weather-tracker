@@ -1,6 +1,5 @@
-package pet.project.servlet;
+package pet.project.servlet.authentication;
 
-import com.password4j.Hash;
 import com.password4j.Password;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -11,22 +10,23 @@ import pet.project.dao.SessionDao;
 import pet.project.dao.UserDao;
 import pet.project.model.Session;
 import pet.project.model.User;
+import pet.project.servlet.WeatherTrackerBaseServlet;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-@WebServlet(urlPatterns = "/sign-up")
+@WebServlet(urlPatterns = "/sign-in")
 @Slf4j
-public class SignUpServlet extends WeatherTrackerBaseServlet {
+public class SignInServlet extends WeatherTrackerBaseServlet {
     private final UserDao userDao = new UserDao();
     private final SessionDao sessionDao = new SessionDao();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        log.info("Processing sign-up page");
-        templateEngine.process("sign-up", context, resp.getWriter());
+        log.info("Processing sign-in page");
+        templateEngine.process("sign-in", context, resp.getWriter());
     }
 
     @Override
@@ -34,40 +34,32 @@ public class SignUpServlet extends WeatherTrackerBaseServlet {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
 
-        if (login == null || login.isBlank()) {
-            log.warn("Login parameter is invalid: processing error page");
+        Optional<User> optionalUser = userDao.findByLogin(login);
+
+        if (optionalUser.isEmpty()) {
+            log.warn("Authentication failed: no user with given login found");
             templateEngine.process("error", context);
             return;
         }
+        User user = optionalUser.get();
 
-        if (password == null || password.isBlank()) {
-            log.warn("Password parameter is invalid: processing error page");
+        String passwordFromDb = user.getPassword();
+
+        if (!Password.check(password, passwordFromDb).withBcrypt()) {
+            log.warn("Authentication failed: given password is wrong");
             templateEngine.process("error", context);
             return;
         }
-
-        Hash hash = Password.hash(password).withBcrypt();
-
-        Optional<User> userOptional = userDao.findByLogin(login);
-
-        if (userOptional.isPresent()) {
-            log.warn("User already exists in the database: redirect to the sign-in page");
-            resp.sendRedirect(req.getContextPath() + "/sign-in");
-        }
-
-        log.info("Saving new user to the database");
-        User user = new User(login, hash.getResult());
-        userDao.save(user);
 
         log.info("Creating new session");
         Session session = new Session(UUID.randomUUID(), user, LocalDateTime.now().plusHours(24));
         sessionDao.save(session);
 
-        log.info("Adding cookie with session to the response");
+        log.info("Adding cookie with the session to the response");
         Cookie cookie = new Cookie("sessionId", session.getId().toString());
         resp.addCookie(cookie);
 
-        log.info("Registration is successful: redirecting to the home page");
+        log.info("Authorization is successful: redirecting to the home page");
         resp.sendRedirect(req.getContextPath());
     }
 }
