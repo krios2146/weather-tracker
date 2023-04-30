@@ -8,13 +8,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import pet.project.dao.SessionDao;
 import pet.project.dao.UserDao;
+import pet.project.exception.InvalidParameterException;
+import pet.project.exception.authentication.UserNotFoundException;
+import pet.project.exception.authentication.WrongPasswordException;
 import pet.project.model.Session;
 import pet.project.model.User;
 import pet.project.servlet.WeatherTrackerBaseServlet;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @WebServlet(urlPatterns = "/sign-in")
@@ -30,36 +32,35 @@ public class SignInServlet extends WeatherTrackerBaseServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, InvalidParameterException, UserNotFoundException, WrongPasswordException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
 
-        Optional<User> optionalUser = userDao.findByLogin(login);
-
-        if (optionalUser.isEmpty()) {
-            log.warn("Authentication failed: no user with given login found");
-            templateEngine.process("error", context);
-            return;
+        if (login == null || login.isBlank()) {
+            throw new InvalidParameterException("Parameter login is invalid");
         }
-        User user = optionalUser.get();
+        if (password == null || password.isBlank()) {
+            throw new InvalidParameterException("Parameter password is invalid");
+        }
 
-        String passwordFromDb = user.getPassword();
+        User user = userDao.findByLogin(login)
+                .orElseThrow(() -> new UserNotFoundException("User: " + login + " is not found"));
 
-        if (!Password.check(password, passwordFromDb).withBcrypt()) {
-            log.warn("Authentication failed: given password is wrong");
-            templateEngine.process("error", context);
-            return;
+        String actualPassword = user.getPassword();
+
+        if (!Password.check(password, actualPassword).withBcrypt()) {
+            throw new WrongPasswordException("Authentication failed, wrong password. User: " + user.getId());
         }
 
         log.info("Creating new session");
         Session session = new Session(UUID.randomUUID(), user, LocalDateTime.now().plusHours(24));
         sessionDao.save(session);
 
-        log.info("Adding cookie with the session to the response");
+        log.info("Adding cookie with the session: " + session.getId() + " to the response");
         Cookie cookie = new Cookie("sessionId", session.getId().toString());
         resp.addCookie(cookie);
 
-        log.info("Authorization is successful: redirecting to the home page");
+        log.info("Authentication is successful: redirecting to the home page");
         resp.sendRedirect(req.getContextPath());
     }
 }
