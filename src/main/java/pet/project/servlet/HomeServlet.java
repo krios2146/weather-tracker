@@ -7,6 +7,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import pet.project.dao.LocationDao;
 import pet.project.dao.SessionDao;
+import pet.project.exception.CookieNotFoundException;
+import pet.project.exception.InvalidParameterException;
+import pet.project.exception.LocationNotFoundException;
+import pet.project.exception.SessionExpiredException;
+import pet.project.exception.api.WeatherApiCallException;
 import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
@@ -17,7 +22,10 @@ import pet.project.model.dto.enums.WeatherCondition;
 import pet.project.service.WeatherApiService;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @WebServlet(urlPatterns = "")
 @Slf4j
@@ -27,44 +35,30 @@ public class HomeServlet extends WeatherTrackerBaseServlet {
     private final WeatherApiService weatherApiService = new WeatherApiService();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, CookieNotFoundException, SessionExpiredException, WeatherApiCallException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
-        Optional<Cookie> cookieOptional = findCookieByName(cookies, "sessionId");
+        Cookie cookie = findCookieByName(cookies, "sessionId")
+                .orElseThrow(() -> new CookieNotFoundException("Cookie with session id is not found"));
 
-        if (cookieOptional.isEmpty()) {
-            log.info("Cookie is not found: processing empty home page");
-            context.clearVariables();
-            templateEngine.process("home", context, resp.getWriter());
-            return;
-        }
+        UUID sessionId = UUID.fromString(cookie.getValue());
 
-        log.info("Finding session from cookie");
-        UUID sessionId = UUID.fromString(cookieOptional.get().getValue());
-        Optional<Session> sessionOptional = sessionDao.findById(sessionId);
+        log.info("Finding session: " + sessionId);
+        Session session = sessionDao.findById(sessionId)
+                .orElseThrow(() -> new SessionExpiredException("Session with id " + sessionId + "has expired"));
 
-        if (sessionOptional.isEmpty()) {
-            log.info("Session has expired: redirecting to the sign-in page");
-            resp.sendRedirect(req.getContextPath() + "/sign-in");
-            return;
-        }
+        User user = session.getUser();
 
-        User user = sessionOptional.get().getUser();
-        log.info("Finding user locations");
+        log.info("Finding locations of user: " + user.getId());
         List<Location> userLocations = locationDao.findByUser(user);
 
         log.info("Finding current weather for user locations");
         Map<Location, WeatherDto> locationWeatherMap = new HashMap<>();
-        try {
-            for (Location location : userLocations) {
-                WeatherApiResponse weather = weatherApiService.getWeatherForLocation(location);
-                WeatherDto weatherDto = buildWeatherDto(weather);
-                locationWeatherMap.put(location, weatherDto);
-            }
-        } catch (Exception e) {
-            log.warn("Issues with weather API call");
-            templateEngine.process("error", context);
-            return;
+
+        for (Location location : userLocations) {
+            WeatherApiResponse weather = weatherApiService.getWeatherForLocation(location);
+            WeatherDto weatherDto = buildWeatherDto(weather);
+            locationWeatherMap.put(location, weatherDto);
         }
 
         context.setVariable("locationWeatherMap", locationWeatherMap);
@@ -75,51 +69,33 @@ public class HomeServlet extends WeatherTrackerBaseServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, CookieNotFoundException, SessionExpiredException, InvalidParameterException, LocationNotFoundException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
-        Optional<Cookie> cookieOptional = findCookieByName(cookies, "sessionId");
+        Cookie cookie = findCookieByName(cookies, "sessionId")
+                .orElseThrow(() -> new CookieNotFoundException("Cookie with session id is not found"));
 
-        if (cookieOptional.isEmpty()) {
-            log.warn("Cookie is not found: processing error page");
-            templateEngine.process("error", context);
-            return;
-        }
+        UUID sessionId = UUID.fromString(cookie.getValue());
 
-        log.info("Finding session from cookie");
-        UUID sessionId = UUID.fromString(cookieOptional.get().getValue());
-        Optional<Session> sessionOptional = sessionDao.findById(sessionId);
+        log.info("Finding session: " + sessionId);
+        Session session = sessionDao.findById(sessionId)
+                .orElseThrow(() -> new SessionExpiredException("Session with id " + sessionId + "has expired"));
 
-        if (sessionOptional.isEmpty()) {
-            log.info("Session has expired: redirecting to the sign-in page");
-            resp.sendRedirect(req.getContextPath() + "/sign-in");
-            return;
-        }
-
-        User user = sessionOptional.get().getUser();
+        User user = session.getUser();
 
         String locationParam = req.getParameter("locationId");
 
         if (locationParam == null || locationParam.isBlank()) {
-            log.warn("Id of a location to delete is not present: processing error page");
-            templateEngine.process("error", context);
-            return;
+            throw new InvalidParameterException("Parameter locationId is invalid");
         }
 
         Long locationId = Long.parseLong(locationParam);
 
-        log.info("Finding location");
-        Optional<Location> locationOptional = locationDao.findById(locationId);
+        log.info("Finding location: " + locationId);
+        Location location = locationDao.findById(locationId)
+                .orElseThrow(() -> new LocationNotFoundException("Location: " + locationId + " is not found"));
 
-        if (locationOptional.isEmpty()) {
-            log.warn("Location with given id is not found in the database: processing error page");
-            templateEngine.process("error", context);
-            return;
-        }
-
-        Location location = locationOptional.get();
-
-        log.info("Deleting current user from location users");
+        log.info("Deleting user: " + user.getId() + " from location: " + locationId);
         List<User> users = location.getUsers();
         users.remove(user);
         location.setUsers(users);
