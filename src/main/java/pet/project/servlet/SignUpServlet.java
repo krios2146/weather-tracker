@@ -2,20 +2,15 @@ package pet.project.servlet;
 
 import com.password4j.Hash;
 import com.password4j.Password;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.thymeleaf.ITemplateEngine;
-import org.thymeleaf.context.IWebContext;
 import pet.project.dao.SessionDao;
 import pet.project.dao.UserDao;
 import pet.project.model.Session;
 import pet.project.model.User;
-import pet.project.util.ThymeleafUtil;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,20 +19,9 @@ import java.util.UUID;
 
 @WebServlet(urlPatterns = "/sign-up")
 @Slf4j
-public class SignUpServlet extends HttpServlet {
+public class SignUpServlet extends WeatherTrackerBaseServlet {
     private final UserDao userDao = new UserDao();
     private final SessionDao sessionDao = new SessionDao();
-    private final ITemplateEngine templateEngine = ThymeleafUtil.getTemplateEngine();
-    private IWebContext context;
-
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (context == null) {
-            log.info("Context is null: building");
-            context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
-        }
-        super.service(req, resp);
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {

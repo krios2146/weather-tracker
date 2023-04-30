@@ -1,14 +1,10 @@
 package pet.project.servlet;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.thymeleaf.ITemplateEngine;
-import org.thymeleaf.context.WebContext;
 import pet.project.dao.LocationDao;
 import pet.project.dao.SessionDao;
 import pet.project.model.Location;
@@ -16,7 +12,6 @@ import pet.project.model.Session;
 import pet.project.model.User;
 import pet.project.model.api.LocationApiResponse;
 import pet.project.service.WeatherApiService;
-import pet.project.util.ThymeleafUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,28 +20,16 @@ import java.util.UUID;
 
 @WebServlet(urlPatterns = "/search")
 @Slf4j
-public class SearchServlet extends HttpServlet {
+public class SearchServlet extends WeatherTrackerBaseServlet {
     private final SessionDao sessionDao = new SessionDao();
     private final LocationDao locationDao = new LocationDao();
     private final WeatherApiService weatherApiService = new WeatherApiService();
-    private final CookieService cookieService = new CookieService();
-    private final ITemplateEngine templateEngine = ThymeleafUtil.getTemplateEngine();
-    private WebContext context;
-
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (context == null) {
-            log.info("Context is null: building");
-            context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
-        }
-        super.service(req, resp);
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
-        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
+        Optional<Cookie> cookieOptional = findCookieByName(cookies, "sessionId");
 
         if (cookieOptional.isEmpty()) {
             log.info("Cookie is not found: processing empty home page");
@@ -95,7 +78,7 @@ public class SearchServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
-        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
+        Optional<Cookie> cookieOptional = findCookieByName(cookies, "sessionId");
 
         if (cookieOptional.isEmpty()) {
             log.info("Cookie is not found: processing empty home page");

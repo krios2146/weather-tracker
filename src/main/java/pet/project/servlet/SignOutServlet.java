@@ -2,7 +2,6 @@ package pet.project.servlet;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -15,15 +14,14 @@ import java.util.UUID;
 
 @WebServlet(urlPatterns = "/sign-out")
 @Slf4j
-public class SignOutServlet extends HttpServlet {
+public class SignOutServlet extends WeatherTrackerBaseServlet {
     private final SessionDao sessionDao = new SessionDao();
-    private final CookieService cookieService = new CookieService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
-        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
+        Optional<Cookie> cookieOptional = findCookieByName(cookies, "sessionId");
 
         if (cookieOptional.isEmpty()) {
             log.info("Cookie is not found: redirecting to the home page");
