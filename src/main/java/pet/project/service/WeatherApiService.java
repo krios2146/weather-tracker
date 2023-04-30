@@ -2,11 +2,12 @@ package pet.project.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pet.project.exception.api.GeocodingApiCallException;
+import pet.project.exception.api.WeatherApiCallException;
 import pet.project.model.Location;
 import pet.project.model.api.LocationApiResponse;
 import pet.project.model.api.WeatherApiResponse;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -22,24 +23,34 @@ public class WeatherApiService {
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public WeatherApiResponse getWeatherForLocation(Location location) throws IOException, InterruptedException {
-        URI uri = buildUriForWeatherRequest(location);
-        HttpRequest request = buildRequest(uri);
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    public WeatherApiResponse getWeatherForLocation(Location location) throws WeatherApiCallException {
+        try {
+            URI uri = buildUriForWeatherRequest(location);
+            HttpRequest request = buildRequest(uri);
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return objectMapper.readValue(response.body(), WeatherApiResponse.class);
+            return objectMapper.readValue(response.body(), WeatherApiResponse.class);
+
+        } catch (Exception e) {
+            throw new WeatherApiCallException("Issues with calling api for location with id = " + location.getId());
+        }
     }
 
-    public List<LocationApiResponse> getLocationsByName(String nameOfLocation) throws IOException, InterruptedException {
-        URI uri = buildUriForGeocodingRequest(nameOfLocation);
-        HttpRequest request = buildRequest(uri);
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    public List<LocationApiResponse> getLocationsByName(String nameOfLocation) throws GeocodingApiCallException {
+        try {
+            URI uri = buildUriForGeocodingRequest(nameOfLocation);
+            HttpRequest request = buildRequest(uri);
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return objectMapper.readValue(
-                response.body(),
-                new TypeReference<List<LocationApiResponse>>() {
-                }
-        );
+            return objectMapper.readValue(
+                    response.body(),
+                    new TypeReference<List<LocationApiResponse>>() {
+                    }
+            );
+
+        } catch (Exception e) {
+            throw new GeocodingApiCallException("Issues with calling geocoding api for name = " + nameOfLocation);
+        }
     }
 
     private static HttpRequest buildRequest(URI uri) {
