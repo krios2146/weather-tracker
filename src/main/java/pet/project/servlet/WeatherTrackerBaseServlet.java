@@ -6,10 +6,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.ITemplateEngine;
-import org.thymeleaf.context.IWebContext;
+import org.thymeleaf.context.WebContext;
 import pet.project.model.Session;
 import pet.project.util.ThymeleafUtil;
 
@@ -20,8 +19,8 @@ import java.util.Optional;
 
 @Slf4j
 public abstract class WeatherTrackerBaseServlet extends HttpServlet {
-    private final ITemplateEngine templateEngine = ThymeleafUtil.getTemplateEngine();
-    private IWebContext context;
+    protected final ITemplateEngine templateEngine = ThymeleafUtil.getTemplateEngine();
+    protected WebContext context;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -42,7 +41,7 @@ public abstract class WeatherTrackerBaseServlet extends HttpServlet {
         }
     }
 
-    private static Optional<Cookie> findCookieByName(Cookie[] cookies, String cookieName) throws NotFoundException {
+    protected static Optional<Cookie> findCookieByName(Cookie[] cookies, String cookieName) {
         if (cookies == null || cookies.length < 1) {
             return Optional.empty();
         }
@@ -52,7 +51,7 @@ public abstract class WeatherTrackerBaseServlet extends HttpServlet {
                 .findFirst();
     }
 
-    private static boolean isSessionExpired(Session session) {
+    protected static boolean isSessionExpired(Session session) {
         LocalDateTime expiresAt = session.getExpiresAt();
         LocalDateTime currentTime = LocalDateTime.now();
 
