@@ -6,11 +6,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import pet.project.dao.SessionDao;
+import pet.project.exception.CookieNotFoundException;
+import pet.project.exception.SessionExpiredException;
 import pet.project.model.Session;
 import pet.project.servlet.WeatherTrackerBaseServlet;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.UUID;
 
 @WebServlet(urlPatterns = "/sign-out")
@@ -19,34 +20,26 @@ public class SignOutServlet extends WeatherTrackerBaseServlet {
     private final SessionDao sessionDao = new SessionDao();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, CookieNotFoundException, SessionExpiredException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
-        Optional<Cookie> cookieOptional = findCookieByName(cookies, "sessionId");
+        Cookie cookie = findCookieByName(cookies, "sessionId")
+                .orElseThrow(() -> new CookieNotFoundException("Cookie with session id is not found"));
 
-        if (cookieOptional.isEmpty()) {
-            log.info("Cookie is not found: redirecting to the home page");
-            resp.sendRedirect(req.getContextPath());
-            return;
-        }
+        UUID sessionId = UUID.fromString(cookie.getValue());
 
-        log.info("Finding session from cookie");
-        UUID sessionId = UUID.fromString(cookieOptional.get().getValue());
-        Optional<Session> sessionOptional = sessionDao.findById(sessionId);
+        log.info("Finding session: " + sessionId);
+        Session session = sessionDao.findById(sessionId)
+                .orElseThrow(() -> new SessionExpiredException("Session with id " + sessionId + "has expired"));
 
-        if (sessionOptional.isEmpty()) {
-            log.info("Session has expired: redirecting to the home page");
-            resp.sendRedirect(req.getContextPath());
-            return;
-        }
 
-        log.info("Deleting session from database");
-        sessionDao.delete(sessionOptional.get());
+        log.info("Deleting session: " + sessionId + " from database");
+        sessionDao.delete(session);
 
         log.info("Deleting cookie from response");
-        Cookie cookie = new Cookie("sessionId", null);
-        cookie.setMaxAge(0);
-        resp.addCookie(cookie);
+        Cookie emptyCookie = new Cookie("sessionId", null);
+        emptyCookie.setMaxAge(0);
+        resp.addCookie(emptyCookie);
 
         log.info("Sign-out is successful: redirecting to the home page");
         resp.sendRedirect(req.getContextPath());
