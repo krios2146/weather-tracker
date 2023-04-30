@@ -1,8 +1,8 @@
 package pet.project.exception;
 
-import java.rmi.ServerException;
+import jakarta.servlet.ServletException;
 
-public class CookieNotFoundException extends ServerException {
+public class CookieNotFoundException extends ServletException {
     public CookieNotFoundException(String msg) {
         super(msg);
     }
