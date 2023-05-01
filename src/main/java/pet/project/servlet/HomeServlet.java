@@ -45,7 +45,7 @@ public class HomeServlet extends WeatherTrackerBaseServlet {
 
         log.info("Finding session: " + sessionId);
         Session session = sessionDao.findById(sessionId)
-                .orElseThrow(() -> new SessionExpiredException("Session with id " + sessionId + "has expired"));
+                .orElseThrow(() -> new SessionExpiredException("Session: " + sessionId + " has expired"));
 
         User user = session.getUser();
 
@@ -79,7 +79,7 @@ public class HomeServlet extends WeatherTrackerBaseServlet {
 
         log.info("Finding session: " + sessionId);
         Session session = sessionDao.findById(sessionId)
-                .orElseThrow(() -> new SessionExpiredException("Session with id " + sessionId + "has expired"));
+                .orElseThrow(() -> new SessionExpiredException("Session: " + sessionId + " has expired"));
 
         User user = session.getUser();
 
