@@ -42,6 +42,10 @@ public class SearchServlet extends WeatherTrackerBaseServlet {
         Session session = sessionDao.findById(sessionId)
                 .orElseThrow(() -> new SessionExpiredException("Session: " + sessionId + " has expired"));
 
+        if (isSessionExpired(session)) {
+            throw new SessionExpiredException("Session: " + sessionId + " has expired");
+        }
+
         User user = session.getUser();
 
         String searchQuery = req.getParameter("q");
@@ -72,6 +76,10 @@ public class SearchServlet extends WeatherTrackerBaseServlet {
         log.info("Finding session: " + sessionId);
         Session session = sessionDao.findById(sessionId)
                 .orElseThrow(() -> new SessionExpiredException("Session: " + sessionId + " has expired"));
+
+        if (isSessionExpired(session)) {
+            throw new SessionExpiredException("Session: " + sessionId + " has expired");
+        }
 
         User user = session.getUser();
 

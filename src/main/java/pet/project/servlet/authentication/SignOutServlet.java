@@ -32,6 +32,9 @@ public class SignOutServlet extends WeatherTrackerBaseServlet {
         Session session = sessionDao.findById(sessionId)
                 .orElseThrow(() -> new SessionExpiredException("Session: " + sessionId + " has expired"));
 
+        if (isSessionExpired(session)) {
+            throw new SessionExpiredException("Session: " + sessionId + " has expired");
+        }
 
         log.info("Deleting session: " + sessionId + " from database");
         sessionDao.delete(session);
