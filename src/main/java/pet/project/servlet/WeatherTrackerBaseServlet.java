@@ -9,6 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
+import pet.project.exception.CookieNotFoundException;
+import pet.project.exception.InvalidParameterException;
+import pet.project.exception.LocationNotFoundException;
+import pet.project.exception.SessionExpiredException;
+import pet.project.exception.api.GeocodingApiCallException;
+import pet.project.exception.api.WeatherApiCallException;
+import pet.project.exception.authentication.UserExistsException;
+import pet.project.exception.authentication.UserNotFoundException;
+import pet.project.exception.authentication.WrongPasswordException;
 import pet.project.model.Session;
 import pet.project.util.ThymeleafUtil;
 
@@ -36,8 +45,21 @@ public abstract class WeatherTrackerBaseServlet extends HttpServlet {
 
         try {
             super.service(req, resp);
-        } catch (Exception e) {
-            templateEngine.process("error", context);
+
+        } catch (InvalidParameterException | GeocodingApiCallException | WeatherApiCallException |
+                 UserNotFoundException | WrongPasswordException | LocationNotFoundException e) {
+            log.warn(e.getMessage());
+            context.setVariable("error", e.getMessage());
+            templateEngine.process("error", context, resp.getWriter());
+
+        } catch (SessionExpiredException | UserExistsException e) {
+            log.warn(e.getMessage());
+            resp.sendRedirect(req.getContextPath() + "/sign-in");
+
+        } catch (CookieNotFoundException e) {
+            log.warn(e.getMessage());
+            context.clearVariables();
+            templateEngine.process("home", context, resp.getWriter());
         }
     }
 
