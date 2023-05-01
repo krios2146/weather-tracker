@@ -1,9 +1,7 @@
 package pet.project.dao;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
+import pet.project.exception.authentication.UserExistsException;
 import pet.project.model.User;
 import pet.project.util.PersistenceUtil;
 
@@ -35,9 +33,13 @@ public class UserDao {
             entityManager.flush();
 
             transaction.commit();
+
+        } catch (EntityExistsException e) {
+            transaction.rollback();
+            throw new UserExistsException("User: " + entity.getLogin() + " already exists");
+
         } catch (Exception e) {
             transaction.rollback();
-            throw new RuntimeException(e);
         }
     }
 
@@ -50,6 +52,7 @@ public class UserDao {
             entityManager.flush();
 
             transaction.commit();
+
         } catch (Exception e) {
             transaction.rollback();
             throw new RuntimeException(e);

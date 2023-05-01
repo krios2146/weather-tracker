@@ -1,17 +1,17 @@
 package pet.project.servlet;
 
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.thymeleaf.ITemplateEngine;
-import org.thymeleaf.context.WebContext;
 import pet.project.dao.LocationDao;
 import pet.project.dao.SessionDao;
+import pet.project.exception.CookieNotFoundException;
+import pet.project.exception.InvalidParameterException;
+import pet.project.exception.LocationNotFoundException;
+import pet.project.exception.SessionExpiredException;
+import pet.project.exception.api.WeatherApiCallException;
 import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
@@ -19,76 +19,50 @@ import pet.project.model.api.WeatherApiResponse;
 import pet.project.model.dto.WeatherDto;
 import pet.project.model.dto.enums.TimeOfDay;
 import pet.project.model.dto.enums.WeatherCondition;
-import pet.project.service.CookieService;
 import pet.project.service.WeatherApiService;
-import pet.project.util.ThymeleafUtil;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @WebServlet(urlPatterns = "")
 @Slf4j
-public class HomeServlet extends HttpServlet {
+public class HomeServlet extends WeatherTrackerBaseServlet {
     private final SessionDao sessionDao = new SessionDao();
     private final LocationDao locationDao = new LocationDao();
     private final WeatherApiService weatherApiService = new WeatherApiService();
-    private final CookieService cookieService = new CookieService();
-    private final ITemplateEngine templateEngine = ThymeleafUtil.getTemplateEngine();
-    private WebContext context;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-    }
-
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (context == null) {
-            log.info("Context is null: building");
-            context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
-        }
-        super.service(req, resp);
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, CookieNotFoundException, SessionExpiredException, WeatherApiCallException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
-        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
+        Cookie cookie = findCookieByName(cookies, "sessionId")
+                .orElseThrow(() -> new CookieNotFoundException("Cookie with session id is not found"));
 
-        if (cookieOptional.isEmpty()) {
-            log.info("Cookie is not found: processing empty home page");
-            context.clearVariables();
-            templateEngine.process("home", context, resp.getWriter());
-            return;
+        UUID sessionId = UUID.fromString(cookie.getValue());
+
+        log.info("Finding session: " + sessionId);
+        Session session = sessionDao.findById(sessionId)
+                .orElseThrow(() -> new SessionExpiredException("Session: " + sessionId + " has expired"));
+
+        if (isSessionExpired(session)) {
+            throw new SessionExpiredException("Session: " + sessionId + " has expired");
         }
 
-        log.info("Finding session from cookie");
-        UUID sessionId = UUID.fromString(cookieOptional.get().getValue());
-        Optional<Session> sessionOptional = sessionDao.findById(sessionId);
+        User user = session.getUser();
 
-        if (sessionOptional.isEmpty()) {
-            log.info("Session has expired: redirecting to the sign-in page");
-            resp.sendRedirect(req.getContextPath() + "/sign-in");
-            return;
-        }
-
-        User user = sessionOptional.get().getUser();
-        log.info("Finding user locations");
+        log.info("Finding locations of user: " + user.getId());
         List<Location> userLocations = locationDao.findByUser(user);
 
         log.info("Finding current weather for user locations");
         Map<Location, WeatherDto> locationWeatherMap = new HashMap<>();
-        try {
-            for (Location location : userLocations) {
-                WeatherApiResponse weather = weatherApiService.getWeatherForLocation(location);
-                WeatherDto weatherDto = buildWeatherDto(weather);
-                locationWeatherMap.put(location, weatherDto);
-            }
-        } catch (Exception e) {
-            log.warn("Issues with weather API call");
-            templateEngine.process("error", context);
-            return;
+
+        for (Location location : userLocations) {
+            WeatherApiResponse weather = weatherApiService.getWeatherForLocation(location);
+            WeatherDto weatherDto = buildWeatherDto(weather);
+            locationWeatherMap.put(location, weatherDto);
         }
 
         context.setVariable("locationWeatherMap", locationWeatherMap);
@@ -99,51 +73,37 @@ public class HomeServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, CookieNotFoundException, SessionExpiredException, InvalidParameterException, LocationNotFoundException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
-        Optional<Cookie> cookieOptional = cookieService.findCookieByName(cookies, "sessionId");
+        Cookie cookie = findCookieByName(cookies, "sessionId")
+                .orElseThrow(() -> new CookieNotFoundException("Cookie with session id is not found"));
 
-        if (cookieOptional.isEmpty()) {
-            log.warn("Cookie is not found: processing error page");
-            templateEngine.process("error", context);
-            return;
+        UUID sessionId = UUID.fromString(cookie.getValue());
+
+        log.info("Finding session: " + sessionId);
+        Session session = sessionDao.findById(sessionId)
+                .orElseThrow(() -> new SessionExpiredException("Session: " + sessionId + " has expired"));
+
+        if (isSessionExpired(session)) {
+            throw new SessionExpiredException("Session: " + sessionId + " has expired");
         }
 
-        log.info("Finding session from cookie");
-        UUID sessionId = UUID.fromString(cookieOptional.get().getValue());
-        Optional<Session> sessionOptional = sessionDao.findById(sessionId);
-
-        if (sessionOptional.isEmpty()) {
-            log.info("Session has expired: redirecting to the sign-in page");
-            resp.sendRedirect(req.getContextPath() + "/sign-in");
-            return;
-        }
-
-        User user = sessionOptional.get().getUser();
+        User user = session.getUser();
 
         String locationParam = req.getParameter("locationId");
 
         if (locationParam == null || locationParam.isBlank()) {
-            log.warn("Id of a location to delete is not present: processing error page");
-            templateEngine.process("error", context);
-            return;
+            throw new InvalidParameterException("Parameter locationId is invalid");
         }
 
         Long locationId = Long.parseLong(locationParam);
 
-        log.info("Finding location");
-        Optional<Location> locationOptional = locationDao.findById(locationId);
+        log.info("Finding location: " + locationId);
+        Location location = locationDao.findById(locationId)
+                .orElseThrow(() -> new LocationNotFoundException("Location: " + locationId + " is not found"));
 
-        if (locationOptional.isEmpty()) {
-            log.warn("Location with given id is not found in the database: processing error page");
-            templateEngine.process("error", context);
-            return;
-        }
-
-        Location location = locationOptional.get();
-
-        log.info("Deleting current user from location users");
+        log.info("Deleting user: " + user.getId() + " from location: " + locationId);
         List<User> users = location.getUsers();
         users.remove(user);
         location.setUsers(users);
