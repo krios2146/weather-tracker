@@ -14,8 +14,8 @@ import pet.project.servlet.WeatherTrackerBaseServlet;
 import java.io.IOException;
 import java.util.UUID;
 
-@WebServlet(urlPatterns = "/sign-out")
 @Slf4j
+@WebServlet("/sign-out")
 public class SignOutServlet extends WeatherTrackerBaseServlet {
     private final SessionDao sessionDao = new SessionDao();
 
