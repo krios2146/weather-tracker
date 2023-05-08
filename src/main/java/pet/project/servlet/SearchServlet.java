@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@WebServlet(urlPatterns = "/search")
 @Slf4j
+@WebServlet("/search")
 public class SearchServlet extends WeatherTrackerBaseServlet {
     private final SessionDao sessionDao = new SessionDao();
     private final LocationDao locationDao = new LocationDao();

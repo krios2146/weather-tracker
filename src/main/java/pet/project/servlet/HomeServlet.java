@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@WebServlet(urlPatterns = "")
 @Slf4j
+@WebServlet("")
 public class HomeServlet extends WeatherTrackerBaseServlet {
     private final SessionDao sessionDao = new SessionDao();
     private final LocationDao locationDao = new LocationDao();

@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@WebServlet(urlPatterns = "/sign-in")
 @Slf4j
+@WebServlet("/sign-in")
 public class SignInServlet extends WeatherTrackerBaseServlet {
     private final UserDao userDao = new UserDao();
     private final SessionDao sessionDao = new SessionDao();
