@@ -38,10 +38,7 @@ public abstract class WeatherTrackerBaseServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (context == null) {
-            log.debug("Context is null: building");
-            context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
-        }
+        context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
 
         try {
             super.service(req, resp);
