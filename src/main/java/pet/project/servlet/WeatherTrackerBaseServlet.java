@@ -57,6 +57,10 @@ public abstract class WeatherTrackerBaseServlet extends HttpServlet {
             log.warn(e.getMessage());
             context.clearVariables();
             templateEngine.process("home", context, resp.getWriter());
+
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            templateEngine.process("error", context, resp.getWriter());
         }
     }
 
