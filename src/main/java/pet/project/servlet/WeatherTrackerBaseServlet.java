@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @Slf4j
 public abstract class WeatherTrackerBaseServlet extends HttpServlet {
-    protected final ITemplateEngine templateEngine = ThymeleafUtil.getTemplateEngine();
+    protected final ITemplateEngine templateEngine = (ITemplateEngine) getServletContext().getAttribute("templateEngine");
     protected WebContext context;
 
     @Override
