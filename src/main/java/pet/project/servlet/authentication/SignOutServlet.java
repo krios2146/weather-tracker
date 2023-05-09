@@ -1,5 +1,6 @@
 package pet.project.servlet.authentication;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ public class SignOutServlet extends WeatherTrackerBaseServlet {
     private final SessionDao sessionDao = new SessionDao();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, CookieNotFoundException, SessionExpiredException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
         Cookie cookie = findCookieByName(cookies, "sessionId")
