@@ -10,7 +10,9 @@
             </div>
             <div class="col d-flex justify-content-end align-items-center" th:classappend="!(${login})? 'd-none'">
                 <span th:text="${login}">username</span>
-                <a class="btn btn-primary px-3 ms-4" href="sign-out" role="button" th:href="@{/sign-out}">Sign out</a>
+                <form method="post" th:action="@{/sign-out}">
+                    <button class="btn btn-primary px-3 ms-4" type="submit">Sign out</button>
+                </form>
             </div>
         </div>
     </div>
