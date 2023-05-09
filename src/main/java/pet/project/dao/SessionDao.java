@@ -2,11 +2,11 @@ package pet.project.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.Query;
 import pet.project.model.Session;
 import pet.project.util.PersistenceUtil;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,9 +18,21 @@ public class SessionDao {
         return Optional.ofNullable(session);
     }
 
-    public List<Session> findAll() {
-        TypedQuery<Session> query = entityManager.createQuery("SELECT * FROM sessions", Session.class);
-        return query.getResultList();
+    public void deleteSessionsExpiredAtTime(LocalDateTime time) {
+        Query query = entityManager.createQuery("DELETE FROM Session s WHERE s.expiresAt <= :time");
+        query.setParameter("time", time);
+
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+
+            query.executeUpdate();
+
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw new RuntimeException(e);
+        }
     }
 
     public void save(Session entity) {
@@ -44,21 +56,6 @@ public class SessionDao {
             transaction.begin();
 
             entityManager.remove(entity);
-            entityManager.flush();
-
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void update(Session entity) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-
-            entityManager.merge(entity);
             entityManager.flush();
 
             transaction.commit();
