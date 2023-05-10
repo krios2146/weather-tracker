@@ -28,7 +28,7 @@ public class ForecastApiResponse {
         @JsonProperty("main")
         private Main main;
 
-        @JsonProperty("list")
+        @JsonProperty("weather")
         private List<Weather> weathers;
     }
 }
