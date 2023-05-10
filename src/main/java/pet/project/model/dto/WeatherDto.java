@@ -4,6 +4,8 @@ import lombok.*;
 import pet.project.model.dto.enums.TimeOfDay;
 import pet.project.model.dto.enums.WeatherCondition;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -36,9 +38,9 @@ public class WeatherDto {
 
     private Integer cloudiness;
 
-    private String date;
+    private LocalDateTime date;
 
-    private String sunrise;
+    private LocalDateTime sunrise;
 
-    private String sunset;
+    private LocalDateTime sunset;
 }
