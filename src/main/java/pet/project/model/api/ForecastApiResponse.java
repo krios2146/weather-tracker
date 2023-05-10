@@ -20,7 +20,7 @@ public class ForecastApiResponse {
 
     @Getter
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class HourlyForecast {
+    public static class HourlyForecast {
         @JsonProperty("dt")
         @JsonDeserialize(using = UnixTimestampDeserializer.class)
         private LocalDateTime date;
