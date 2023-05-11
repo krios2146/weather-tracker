@@ -13,7 +13,6 @@
 <body>
 <div th:replace="~{header-component}"></div>
 <div class="container min-vh-100">
-    <div th:replace="~{search-component}"></div>
     <div class="container-fluid" th:if="${locationWeatherMap}">
         <div class="row">
             <div class="card m-2" style="width: 30rem" th:each="item : ${locationWeatherMap}">
