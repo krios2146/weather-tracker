@@ -66,6 +66,7 @@ public class ForecastServlet extends WeatherTrackerBaseServlet {
         List<WeatherDto> dailyForecast = forecastService.getDailyForecast(forecastForLocation);
 
         context.setVariable("login", session.getUser().getLogin());
+        context.setVariable("locationName", location.getName());
         context.setVariable("hourlyForecast", hourlyForecast);
         context.setVariable("dailyForecast", dailyForecast);
 
