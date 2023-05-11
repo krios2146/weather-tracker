@@ -43,7 +43,14 @@ public class ForecastService {
             currentDay = currentDay.plusDays(1);
         }
 
-        return dailyForecasts;
+        return dailyForecasts.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey(LocalDate::compareTo))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue,
+                        LinkedHashMap::new)
+                );
     }
 
     private static WeatherDto buildWeatherDto(HourlyForecast hourlyForecast) {
