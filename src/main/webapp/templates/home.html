@@ -13,7 +13,7 @@
 <body>
 <div th:replace="~{header-component}"></div>
 <div class="container min-vh-100">
-    <div th:replace="~{search-component}"></div>
+    <h2>Current Weather</h2>
     <div class="container-fluid" th:if="${locationWeatherMap}">
         <div class="row">
             <div class="card m-2" style="width: 30rem" th:each="item : ${locationWeatherMap}">
@@ -22,14 +22,16 @@
                         <div class="row">
                             <div class="col-10">
                                 <h4 class="card-title" th:text="${item.key.name}">Location</h4>
-                                <h6 class="text-muted card-subtitle mb-3" th:text="${item.value.date}">Time</h6>
+                                <h6 class="text-muted card-subtitle mb-3"
+                                    th:text="${#dates.format(item.value.date, 'HH:mm:ss')}">Time</h6>
                             </div>
                             <div class="col-2">
                                 <div class="dropdown">
                                     <button aria-expanded="false" class="btn" data-bs-toggle="dropdown"
                                             style="opacity: 1;" type="button">
                                         <svg class="bi bi-three-dots-vertical" fill="currentColor"
-                                             height="1em" viewBox="0 0 16 16" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                             height="1em" viewBox="0 0 16 16" width="1em"
+                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
                                                     d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z">
                                             </path>
@@ -52,7 +54,7 @@
                                      th:src="@{'/img/' + ${item.value.weatherCondition} + '-' + ${item.value.timeOfDay} + '.svg'}">
                             </div>
                             <div class="col-md-6 text-end align-self-center">
-                                <h1 th:text="${item.value.temperature} + '°C'"></h1>
+                                <h1 class="text-primary" th:text="${item.value.temperature} + '°C'"></h1>
                                 <p th:text="'Feels like ' + ${item.value.temperatureFeelsLike} + '°C'"></p>
                             </div>
                         </div>
@@ -80,13 +82,14 @@
                                     </li>
                                     <li class="list-group-item">
                                         <svg class="bi bi-sunrise" fill="currentColor" height="1em"
-                                             style="margin-right: 7px;width: 20px;margin-left: -2px;" viewBox="0 0 16 16" width="1em"
+                                             style="margin-right: 7px;width: 20px;margin-left: -2px;"
+                                             viewBox="0 0 16 16" width="1em"
                                              xmlns="http://www.w3.org/2000/svg">
                                             <path
                                                     d="M7.646 1.146a.5.5 0 0 1 .708 0l1.5 1.5a.5.5 0 0 1-.708.708L8.5 2.707V4.5a.5.5 0 0 1-1 0V2.707l-.646.647a.5.5 0 1 1-.708-.708l1.5-1.5zM2.343 4.343a.5.5 0 0 1 .707 0l1.414 1.414a.5.5 0 0 1-.707.707L2.343 5.05a.5.5 0 0 1 0-.707zm11.314 0a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zM8 7a3 3 0 0 1 2.599 4.5H5.4A3 3 0 0 1 8 7zm3.71 4.5a4 4 0 1 0-7.418 0H.499a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1h-3.79zM0 10a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 0 10zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z">
                                             </path>
                                         </svg>
-                                        <span th:text="'Sunrise ' + ${item.value.sunrise}"></span>
+                                        <span th:text="'Sunrise ' + ${#dates.format(item.value.sunrise, 'HH:mm:ss')}"></span>
                                     </li>
                                 </ul>
                             </div>
@@ -109,21 +112,30 @@
                                     </li>
                                     <li class="list-group-item">
                                         <svg class="bi bi-sunset" fill="currentColor" height="1em"
-                                             style="margin-right: 5px;width: 20px;margin-left: -5px;" viewBox="0 0 16 16" width="1em"
+                                             style="margin-right: 5px;width: 20px;margin-left: -5px;"
+                                             viewBox="0 0 16 16" width="1em"
                                              xmlns="http://www.w3.org/2000/svg">
                                             <path
                                                     d="M7.646 4.854a.5.5 0 0 0 .708 0l1.5-1.5a.5.5 0 0 0-.708-.708l-.646.647V1.5a.5.5 0 0 0-1 0v1.793l-.646-.647a.5.5 0 1 0-.708.708l1.5 1.5zm-5.303-.51a.5.5 0 0 1 .707 0l1.414 1.413a.5.5 0 0 1-.707.707L2.343 5.05a.5.5 0 0 1 0-.707zm11.314 0a.5.5 0 0 1 0 .706l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zM8 7a3 3 0 0 1 2.599 4.5H5.4A3 3 0 0 1 8 7zm3.71 4.5a4 4 0 1 0-7.418 0H.499a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1h-3.79zM0 10a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 0 10zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z">
                                             </path>
                                         </svg>
-                                        <span th:text="'Sunset ' + ${item.value.sunset}"></span>
+                                        <span th:text="'Sunset ' + ${#dates.format(item.value.sunset, 'HH:mm:ss')}"></span>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+                    <a class="btn btn-primary" role="button"
+                       th:href="@{/forecast(locationId=${item.key.id})}">Forecast</a>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="container d-flex justify-content-between align-items-center flex-column"
+         th:unless="${locationWeatherMap}">
+        <img alt="missing data" th:src="@{/img/missing-data.svg}">
+        <p class="fw-bold">Location Required for Weather Information</p>
+        <p>Please add a location to view weather. You can do it by using the search bar above.</p>
     </div>
 </div>
 <div th:replace="~{footer-component}"></div>

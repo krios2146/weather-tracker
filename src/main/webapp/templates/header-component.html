@@ -1,8 +1,11 @@
-<header class="container-fluid p-3">
+<header class="container-fluid p-3 mb-5">
     <div class="container">
-        <div class="row justify-content-between">
-            <div class="col align-items-center d-flex">
+        <div class="row justify-content-between align-items-center">
+            <div class="col d-flex">
                 <a class="text-decoration-none" href="/" th:href="@{/}"><h4 class="m-0">Weather tracker</h4></a>
+            </div>
+            <div class="col d-flex">
+                <div th:replace="~{search-component}"></div>
             </div>
             <div class="col d-flex justify-content-end" th:classappend="${login}? 'd-none'">
                 <a class="btn btn-outline-primary px-3" href="sign-in" role="button" th:href="@{/sign-in}">Sign in</a>
@@ -11,7 +14,7 @@
             <div class="col d-flex justify-content-end align-items-center" th:classappend="!(${login})? 'd-none'">
                 <span th:text="${login}">username</span>
                 <form method="post" th:action="@{/sign-out}">
-                    <button class="btn btn-primary px-3 ms-4" type="submit">Sign out</button>
+                    <button class="btn btn-outline-primary px-3 ms-4" type="submit">Sign out</button>
                 </form>
             </div>
         </div>
