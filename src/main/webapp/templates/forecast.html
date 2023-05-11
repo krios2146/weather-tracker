@@ -17,12 +17,13 @@
     <div class="container my-3">
         <h2>Hourly Forecast</h2>
         <div class="card-group">
-            <div class="card text-start" th:each="forecast, iterStat : ${hourlyForecast}">
+            <div class="card text-start" th:each="forecast, iterStat : ${hourlyForecast}" th:if="${iterStat.index} < 5">
                 <div class="card-body">
-                    <h4 class="card-title" th:text="${forecast.date}">Now</h4>
-                    <h2 class="text-primary card-title" th:text="${forecast.temperature}">25.5°C</h2>
+                    <h4 class="card-title" th:text="${#dates.format(forecast.date, 'HH:mm')}"></h4>
+                    <h2 class="text-primary card-title"
+                        th:text="${#numbers.formatDecimal(forecast.temperature, 1, 2)} + '°C'"></h2>
                     <img th:src="@{'/img/' + ${forecast.weatherCondition} + '-' + ${forecast.timeOfDay} + '.svg'}">
-                    <p class="lead card-text" th:text="${forecast.description}">Clear sky</p>
+                    <p class="lead card-text" th:text="${#strings.capitalize(forecast.description)}"></p>
                 </div>
             </div>
         </div>
@@ -30,7 +31,7 @@
     <div class="container">
         <h2>Daily Forecast</h2>
         <div class="card-group">
-            <div class="card" th:each="forecast, iterStat : ${dailyForecast}">
+            <div class="card" th:each="forecast : ${dailyForecast}">
                 <div class="card-body">
                     <h4 class="card-title" th:text="${#dates.format(forecast.date, 'dd-MMM')}">Today</h4>
                     <h2 class="text-primary card-title"
