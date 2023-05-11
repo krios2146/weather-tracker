@@ -16,6 +16,7 @@
     <div th:replace="~{search-component}"></div>
     <div class="container my-3">
         <h2>Hourly Forecast</h2>
+        <p th:text="${locationName}"></p>
         <div class="card-group">
             <div class="card text-start" th:each="forecast, iterStat : ${hourlyForecast}" th:if="${iterStat.index} < 5">
                 <div class="card-body d-flex flex-column">
@@ -30,6 +31,7 @@
     </div>
     <div class="container mt-5">
         <h2>Daily Forecast</h2>
+        <p th:text="${locationName}"></p>
         <div class="card-group">
             <div class="card" th:each="forecast : ${dailyForecast}">
                 <div class="card-body d-flex flex-column">
