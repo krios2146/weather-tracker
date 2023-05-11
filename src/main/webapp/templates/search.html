@@ -11,6 +11,7 @@
 <body>
 <div th:replace="header-component"></div>
 <div class="container">
+    <h2>Search results</h2>
     <div class="row row-cols-3 mt-3">
         <div class="col mb-3" th:each="location : ${foundLocations}">
             <div class="card">

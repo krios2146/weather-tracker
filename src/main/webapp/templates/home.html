@@ -13,6 +13,7 @@
 <body>
 <div th:replace="~{header-component}"></div>
 <div class="container min-vh-100">
+    <h2>Current Weather</h2>
     <div class="container-fluid" th:if="${locationWeatherMap}">
         <div class="row">
             <div class="card m-2" style="width: 30rem" th:each="item : ${locationWeatherMap}">
@@ -53,7 +54,7 @@
                                      th:src="@{'/img/' + ${item.value.weatherCondition} + '-' + ${item.value.timeOfDay} + '.svg'}">
                             </div>
                             <div class="col-md-6 text-end align-self-center">
-                                <h1 th:text="${item.value.temperature} + '°C'"></h1>
+                                <h1 class="text-primary" th:text="${item.value.temperature} + '°C'"></h1>
                                 <p th:text="'Feels like ' + ${item.value.temperatureFeelsLike} + '°C'"></p>
                             </div>
                         </div>
