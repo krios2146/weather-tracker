@@ -2,9 +2,11 @@ package pet.project.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pet.project.exception.api.ForecastApiCallException;
 import pet.project.exception.api.GeocodingApiCallException;
 import pet.project.exception.api.WeatherApiCallException;
 import pet.project.model.Location;
+import pet.project.model.api.ForecastApiResponse;
 import pet.project.model.api.LocationApiResponse;
 import pet.project.model.api.WeatherApiResponse;
 
@@ -18,6 +20,7 @@ public class WeatherApiService {
     private static final String APP_ID = "ff54fce37c4721c1b5e9e22bbd8e9274";
     private static final String BASE_API_URL = "https://api.openweathermap.org";
     private static final String WEATHER_API_URL_SUFFIX = "/data/2.5/weather";
+    private static final String FORECAST_API_URL_SUFFIX = "/data/2.5/forecast";
     private static final String GEOCODING_API_URL_SUFFIX = "/geo/1.0/direct";
 
     private final HttpClient client = HttpClient.newHttpClient();
@@ -44,12 +47,24 @@ public class WeatherApiService {
 
             return objectMapper.readValue(
                     response.body(),
-                    new TypeReference<List<LocationApiResponse>>() {
-                    }
+                    new TypeReference<List<LocationApiResponse>>() {}
             );
 
         } catch (Exception e) {
             throw new GeocodingApiCallException("Issues with calling geocoding api for name = " + nameOfLocation);
+        }
+    }
+
+    public ForecastApiResponse getForecastForLocation(Location location) throws ForecastApiCallException {
+        try {
+            URI uri = buildUriForForecastRequest(location);
+            HttpRequest request = buildRequest(uri);
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            return objectMapper.readValue(response.body(), ForecastApiResponse.class);
+
+        } catch (Exception e) {
+            throw new ForecastApiCallException("Issues with calling api for location with id = " + location.getId());
         }
     }
 
@@ -61,6 +76,14 @@ public class WeatherApiService {
 
     private static URI buildUriForWeatherRequest(Location location) {
         return URI.create(BASE_API_URL + WEATHER_API_URL_SUFFIX
+                + "?lat=" + location.getLatitude()
+                + "&lon=" + location.getLongitude()
+                + "&appid=" + APP_ID
+                + "&units=" + "metric");
+    }
+
+    private static URI buildUriForForecastRequest(Location location) {
+        return URI.create(BASE_API_URL + FORECAST_API_URL_SUFFIX
                 + "?lat=" + location.getLatitude()
                 + "&lon=" + location.getLongitude()
                 + "&appid=" + APP_ID

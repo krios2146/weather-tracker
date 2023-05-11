@@ -16,16 +16,15 @@ import pet.project.model.Location;
 import pet.project.model.Session;
 import pet.project.model.User;
 import pet.project.model.api.WeatherApiResponse;
+import pet.project.model.api.entity.Weather;
 import pet.project.model.dto.WeatherDto;
 import pet.project.model.dto.enums.TimeOfDay;
 import pet.project.model.dto.enums.WeatherCondition;
 import pet.project.service.WeatherApiService;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.ZoneId;
+import java.util.*;
 
 @Slf4j
 @WebServlet("")
@@ -113,25 +112,25 @@ public class HomeServlet extends WeatherTrackerBaseServlet {
         resp.sendRedirect(req.getContextPath());
     }
 
-    private static WeatherDto buildWeatherDto(WeatherApiResponse weather) {
-        WeatherApiResponse.Weather weatherApiModel = weather.getWeatherList().get(0);
+    private static WeatherDto buildWeatherDto(WeatherApiResponse weatherApiResponse) {
+        Weather weather = weatherApiResponse.getWeatherList().get(0);
         return WeatherDto.builder()
-                .weatherCondition(WeatherCondition.getWeatherConditionForCode(weatherApiModel.getId()))
-                .timeOfDay(TimeOfDay.getTimeOfDayForTime(weather.getDate()))
-                .description(weatherApiModel.getDescription())
-                .temperature(weather.getMain().getTemperature())
-                .temperatureFeelsLike(weather.getMain().getTemperatureFeelsLike())
-                .temperatureMinimum(weather.getMain().getTemperatureMinimal())
-                .temperatureMaximum(weather.getMain().getTemperatureMaximum())
-                .humidity(weather.getMain().getHumidity())
-                .pressure(weather.getMain().getPressure())
-                .windSpeed(weather.getWind().getSpeed())
-                .windDirection(weather.getWind().getDeg())
-                .windGust(weather.getWind().getGust())
-                .cloudiness(weather.getClouds().getCloudiness())
-                .date(weather.getDate())
-                .sunrise(weather.getSys().getSunriseTime())
-                .sunset(weather.getSys().getSunsetTime())
+                .weatherCondition(WeatherCondition.getWeatherConditionForCode(weather.getId()))
+                .timeOfDay(TimeOfDay.getTimeOfDayForTime(weatherApiResponse.getDate()))
+                .description(weather.getDescription())
+                .temperature(weatherApiResponse.getMain().getTemperature())
+                .temperatureFeelsLike(weatherApiResponse.getMain().getTemperatureFeelsLike())
+                .temperatureMinimum(weatherApiResponse.getMain().getTemperatureMinimal())
+                .temperatureMaximum(weatherApiResponse.getMain().getTemperatureMaximum())
+                .humidity(weatherApiResponse.getMain().getHumidity())
+                .pressure(weatherApiResponse.getMain().getPressure())
+                .windSpeed(weatherApiResponse.getWind().getSpeed())
+                .windDirection(weatherApiResponse.getWind().getDeg())
+                .windGust(weatherApiResponse.getWind().getGust())
+                .cloudiness(weatherApiResponse.getClouds().getCloudiness())
+                .date(Date.from(weatherApiResponse.getDate().atZone(ZoneId.systemDefault()).toInstant()))
+                .sunrise(Date.from(weatherApiResponse.getSys().getSunriseTime().atZone(ZoneId.systemDefault()).toInstant()))
+                .sunset(Date.from(weatherApiResponse.getSys().getSunsetTime().atZone(ZoneId.systemDefault()).toInstant()))
                 .build();
     }
 }
