@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
-import pet.project.exception.CookieNotFoundException;
-import pet.project.exception.InvalidParameterException;
-import pet.project.exception.LocationNotFoundException;
-import pet.project.exception.SessionExpiredException;
+import pet.project.exception.*;
 import pet.project.exception.api.GeocodingApiCallException;
 import pet.project.exception.api.WeatherApiCallException;
 import pet.project.exception.authentication.UserExistsException;
@@ -45,7 +42,8 @@ public abstract class WeatherTrackerBaseServlet extends HttpServlet {
             super.service(req, resp);
 
         } catch (InvalidParameterException | GeocodingApiCallException | WeatherApiCallException |
-                 UserNotFoundException | WrongPasswordException | LocationNotFoundException e) {
+                 UserNotFoundException | WrongPasswordException | LocationNotFoundException |
+                 UnauthorizedSearchException e) {
             log.warn(e.getMessage());
             context.setVariable("error", e.getMessage());
             templateEngine.process("error", context, resp.getWriter());
