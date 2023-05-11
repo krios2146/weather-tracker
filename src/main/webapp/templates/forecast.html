@@ -39,8 +39,8 @@
                     <p class="text-primary card-text"
                        th:text="${#numbers.formatDecimal(forecast.temperatureMinimum, 1, 2)} + '°C'"></p>
                     <img th:src="@{'/img/' + ${forecast.weatherCondition} + '-' + ${forecast.timeOfDay} + '.svg'}">
-                    <p class="lead card-text mt-auto" th:text="${#strings.capitalize(forecast.weatherCondition)}">Clear
-                        sky</p>
+                    <p class="lead card-text mt-auto"
+                       th:text="${#strings.capitalize(#strings.toLowerCase(forecast.weatherCondition))}"></p>
                 </div>
             </div>
         </div>
