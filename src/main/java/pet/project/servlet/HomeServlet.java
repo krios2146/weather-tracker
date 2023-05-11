@@ -23,10 +23,8 @@ import pet.project.model.dto.enums.WeatherCondition;
 import pet.project.service.WeatherApiService;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.ZoneId;
+import java.util.*;
 
 @Slf4j
 @WebServlet("")
@@ -130,9 +128,9 @@ public class HomeServlet extends WeatherTrackerBaseServlet {
                 .windDirection(weatherApiResponse.getWind().getDeg())
                 .windGust(weatherApiResponse.getWind().getGust())
                 .cloudiness(weatherApiResponse.getClouds().getCloudiness())
-                .date(weatherApiResponse.getDate())
-                .sunrise(weatherApiResponse.getSys().getSunriseTime())
-                .sunset(weatherApiResponse.getSys().getSunsetTime())
+                .date(Date.from(weatherApiResponse.getDate().atZone(ZoneId.systemDefault()).toInstant()))
+                .sunrise(Date.from(weatherApiResponse.getSys().getSunriseTime().atZone(ZoneId.systemDefault()).toInstant()))
+                .sunset(Date.from(weatherApiResponse.getSys().getSunsetTime().atZone(ZoneId.systemDefault()).toInstant()))
                 .build();
     }
 }
