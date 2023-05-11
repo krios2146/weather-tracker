@@ -28,16 +28,17 @@ import java.util.Optional;
 
 @Slf4j
 public abstract class WeatherTrackerBaseServlet extends HttpServlet {
-    protected final ITemplateEngine templateEngine = (ITemplateEngine) getServletContext().getAttribute("templateEngine");
+    protected ITemplateEngine templateEngine;
     protected WebContext context;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
+        templateEngine = (ITemplateEngine) config.getServletContext().getAttribute("templateEngine");
         super.init(config);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
 
         try {
