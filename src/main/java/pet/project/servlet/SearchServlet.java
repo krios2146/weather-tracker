@@ -10,6 +10,7 @@ import pet.project.dao.SessionDao;
 import pet.project.exception.CookieNotFoundException;
 import pet.project.exception.InvalidParameterException;
 import pet.project.exception.SessionExpiredException;
+import pet.project.exception.UnauthorizedSearchException;
 import pet.project.exception.api.GeocodingApiCallException;
 import pet.project.model.Location;
 import pet.project.model.Session;
@@ -30,11 +31,11 @@ public class SearchServlet extends WeatherTrackerBaseServlet {
     private final WeatherApiService weatherApiService = new WeatherApiService();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, CookieNotFoundException, SessionExpiredException, InvalidParameterException, GeocodingApiCallException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, SessionExpiredException, InvalidParameterException, GeocodingApiCallException, UnauthorizedSearchException {
         log.info("Finding cookie with session id");
         Cookie[] cookies = req.getCookies();
         Cookie cookie = findCookieByName(cookies, "sessionId")
-                .orElseThrow(() -> new CookieNotFoundException("Cookie with session id is not found"));
+                .orElseThrow(() -> new UnauthorizedSearchException("Attempt to search location without authorization"));
 
         UUID sessionId = UUID.fromString(cookie.getValue());
 
