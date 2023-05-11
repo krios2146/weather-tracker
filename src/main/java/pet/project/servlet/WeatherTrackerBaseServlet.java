@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
-import pet.project.exception.CookieNotFoundException;
-import pet.project.exception.InvalidParameterException;
-import pet.project.exception.LocationNotFoundException;
-import pet.project.exception.SessionExpiredException;
+import pet.project.exception.*;
 import pet.project.exception.api.GeocodingApiCallException;
 import pet.project.exception.api.WeatherApiCallException;
 import pet.project.exception.authentication.UserExistsException;
@@ -28,23 +25,25 @@ import java.util.Optional;
 
 @Slf4j
 public abstract class WeatherTrackerBaseServlet extends HttpServlet {
-    protected final ITemplateEngine templateEngine = (ITemplateEngine) getServletContext().getAttribute("templateEngine");
+    protected ITemplateEngine templateEngine;
     protected WebContext context;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
+        templateEngine = (ITemplateEngine) config.getServletContext().getAttribute("templateEngine");
         super.init(config);
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         context = ThymeleafUtil.buildWebContext(req, resp, getServletContext());
 
         try {
             super.service(req, resp);
 
         } catch (InvalidParameterException | GeocodingApiCallException | WeatherApiCallException |
-                 UserNotFoundException | WrongPasswordException | LocationNotFoundException e) {
+                 UserNotFoundException | WrongPasswordException | LocationNotFoundException |
+                 UnauthorizedSearchException e) {
             log.warn(e.getMessage());
             context.setVariable("error", e.getMessage());
             templateEngine.process("error", context, resp.getWriter());
