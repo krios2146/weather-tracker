@@ -8,11 +8,11 @@ import pet.project.model.dto.enums.TimeOfDay;
 import pet.project.model.dto.enums.WeatherCondition;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static pet.project.model.dto.enums.TimeOfDay.UNDEFINED;
 
 public class ForecastService {
     public List<WeatherDto> getHourlyForecast(ForecastApiResponse response) {
@@ -49,7 +49,7 @@ public class ForecastService {
     private static WeatherDto buildWeatherDto(HourlyForecast hourlyForecast) {
         Weather weather = hourlyForecast.getWeathers().get(0);
         return WeatherDto.builder()
-                .date(hourlyForecast.getDate())
+                .date(Date.from(hourlyForecast.getDate().atZone(ZoneId.systemDefault()).toInstant()))
                 .description(weather.getDescription())
                 .temperature(hourlyForecast.getMain().getTemperature())
                 .timeOfDay(TimeOfDay.getTimeOfDayForTime(hourlyForecast.getDate()))
@@ -59,11 +59,12 @@ public class ForecastService {
 
     private static WeatherDto buildWeatherDto(List<HourlyForecast> hourlyForecasts) {
         return WeatherDto.builder()
-                .weatherCondition(getAverageWeather(hourlyForecasts))
+                .date(Date.from(hourlyForecasts.get(0).getDate().atZone(ZoneId.systemDefault()).toInstant()))
                 .temperature(getAverageTemperature(hourlyForecasts))
                 .temperatureMaximum(getMaxTemperature(hourlyForecasts))
                 .temperatureMinimum(getMinTemperature(hourlyForecasts))
-                .date(hourlyForecasts.get(0).getDate())
+                .timeOfDay(UNDEFINED)
+                .weatherCondition(getAverageWeather(hourlyForecasts))
                 .build();
     }
 
