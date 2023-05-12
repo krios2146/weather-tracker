@@ -229,7 +229,23 @@ class HomeServletTest {
     }
 
     @Test
-    public void doPost_locationNotFound_shouldThrowLocationNotFoundException() {
+    public void doPost_locationIdParamIsNotANumber_shouldThrowInvalidParameterException() {
+        Cookie cookie = new Cookie("sessionId", UUID.randomUUID().toString());
+        Session session = new Session();
+        session.setExpiresAt(LocalDateTime.MAX);
+        when(request.getCookies()).thenReturn(new Cookie[]{cookie});
+        when(sessionDao.findById(any())).thenReturn(Optional.of(session));
+        when(request.getParameter(eq("locationId"))).thenReturn("Text");
+
+        verify(locationDao, never()).findById(any());
+        assertThrows(
+                InvalidParameterException.class,
+                () -> homeServlet.doPost(request, response)
+        );
+    }
+
+    @Test
+    public void doPost_locationIsNotFound_shouldThrowLocationNotFoundException() {
         Cookie cookie = new Cookie("sessionId", UUID.randomUUID().toString());
         Session session = new Session();
         session.setExpiresAt(LocalDateTime.MAX);
@@ -245,7 +261,7 @@ class HomeServletTest {
     }
 
     @Test
-    public void doPost_locationFound_shouldDeleteUserFromLocation() throws Exception {
+    public void doPost_locationIsFound_shouldDeleteUserFromLocation() throws Exception {
         Cookie cookie = new Cookie("sessionId", UUID.randomUUID().toString());
         User userToPersist = new User();
         User userToDelete = new User();
