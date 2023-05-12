@@ -141,10 +141,10 @@ class SignInServletTest {
 
     @Test
     public void doPost_authenticationSuccessful_shouldCreateNewSession() throws Exception {
-        User user = new User("login", Password.hash("actualPassword").withBcrypt().getResult());
+        User user = new User("login", Password.hash("password").withBcrypt().getResult());
         Session expectedSession = new Session(user, LocalDateTime.now().plusHours(24));
         when(request.getParameter("login")).thenReturn("login");
-        when(request.getParameter("password")).thenReturn("actualPassword");
+        when(request.getParameter("password")).thenReturn("password");
         when(userDao.findByLogin(any())).thenReturn(Optional.of(user));
         ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
 
@@ -157,19 +157,19 @@ class SignInServletTest {
 
     @Test
     public void doPost_authenticationSuccessful_shouldAddCookie() throws Exception {
-        User user = new User("login", Password.hash("actualPassword").withBcrypt().getResult());
+        User user = new User("login", Password.hash("password").withBcrypt().getResult());
         when(request.getParameter("login")).thenReturn("login");
-        when(request.getParameter("password")).thenReturn("actualPassword");
+        when(request.getParameter("password")).thenReturn("password");
         when(userDao.findByLogin(any())).thenReturn(Optional.of(user));
         ArgumentCaptor<Session> sessionCaptor = ArgumentCaptor.forClass(Session.class);
-        ArgumentCaptor<Cookie> coolieCaptor = ArgumentCaptor.forClass(Cookie.class);
+        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
 
         signInServlet.doPost(request, response);
 
         verify(sessionDao, atMostOnce()).save(sessionCaptor.capture());
-        verify(response, atMostOnce()).addCookie(coolieCaptor.capture());
+        verify(response, atMostOnce()).addCookie(cookieCaptor.capture());
         String savedSessionId = sessionCaptor.getValue().getId().toString();
-        String sessionIdAddedToCookie = coolieCaptor.getValue().getValue();
+        String sessionIdAddedToCookie = cookieCaptor.getValue().getValue();
         assertEquals(savedSessionId, sessionIdAddedToCookie);
     }
 }
