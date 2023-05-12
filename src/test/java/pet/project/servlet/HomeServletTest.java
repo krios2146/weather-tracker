@@ -123,13 +123,14 @@ class HomeServletTest {
         Cookie cookie = new Cookie("sessionId", UUID.randomUUID().toString());
         Session session = new Session();
         session.setExpiresAt(LocalDateTime.MAX);
-        session.setUser(new User());
+        session.setUser(new User("login", "password"));
         when(request.getCookies()).thenReturn(new Cookie[]{cookie});
         when(sessionDao.findById(any())).thenReturn(Optional.of(session));
 
         homeServlet.doGet(request, response);
 
-        verify(context, times(2)).setVariable(anyString(), any());
+        verify(context, atMostOnce()).setVariable(eq("login"), eq("login"));
+        verify(context, atMostOnce()).setVariable(eq("locationWeatherMap"), anyMap());
         verify(templateEngine, atMostOnce()).process(eq("home"), eq(context), any());
     }
 
@@ -138,7 +139,7 @@ class HomeServletTest {
         Cookie cookie = new Cookie("sessionId", UUID.randomUUID().toString());
         Session session = new Session();
         session.setExpiresAt(LocalDateTime.MAX);
-        session.setUser(new User());
+        session.setUser(new User("login", "password"));
         WeatherApiResponse apiResponse = mock(WeatherApiResponse.class);
         WeatherApiResponse.Sys sys = mock(WeatherApiResponse.Sys.class);
         when(request.getCookies()).thenReturn(new Cookie[]{cookie});
@@ -156,7 +157,8 @@ class HomeServletTest {
 
         homeServlet.doGet(request, response);
 
-        verify(context, times(2)).setVariable(anyString(), any());
+        verify(context, atMostOnce()).setVariable(eq("login"), eq("login"));
+        verify(context, atMostOnce()).setVariable(eq("locationWeatherMap"), anyMap());
         verify(templateEngine, atMostOnce()).process(eq("home"), eq(context), any());
     }
 
