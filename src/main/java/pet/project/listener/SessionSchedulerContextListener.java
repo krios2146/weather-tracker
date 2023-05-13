@@ -1,4 +1,4 @@
-package pet.project;
+package pet.project.listener;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
