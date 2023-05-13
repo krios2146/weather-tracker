@@ -1,5 +1,8 @@
 # Weather Tracker
 
+![Home page screenshot | 100](/img/home-page-screenshot.png)
+![Forecast page screenshot](/img/forecast-page-screenshot.png)
+
 Created according to the technical specifications presented
 in [this course](https://zhukovsd.github.io/java-backend-learning-course/Projects/WeatherViewer/)
 
